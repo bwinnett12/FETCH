@@ -1,5 +1,6 @@
 
-from bio import Entrez
+from Bio import Entrez, SeqIO
+from bs4 import BeautifulSoup
 
 
 def parse_ncbi(query):
@@ -14,26 +15,52 @@ def parse_ncbi(query):
     gi_query = ",".join(record["IdList"])
 
     # Fetches those matching IDs from esearch
-    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode="text")
+    # rettype gb = genebank(text as retmode), fasta = fasta (use xml as retmode)
+    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode="xml")
 
-    # Writes the text to a .txt (This is mostly for testing the outputs of xml
-    text = handle.read()
-    print(text)   # Just to show what the output looks like (in xml)
-    print(len(text))
+    raw_data = Entrez.read(handle)
+    print(raw_data[0])
 
     # if using an xml, then do "wb". if .txt do "w"
-    xml_out = open("./output.txt", "w")
-    # xml_out.write(text)
-    xml_out.write(text)
+    # We are pulling a xml and then parsing it to get what parts we want as a fasta
+    fasta_out = open("./output.txt", "w")
 
-    print(handle.read())
-    xml_out.close()
+    # Goes through each
+    for i in range(int(len(raw_data))):
+        identifier = "> " + raw_data[i]["GBSeq_locus"] + " " + raw_data[i]["GBSeq_organism"]
+        sequence = raw_data[i]["GBSeq_sequence"].upper()
+
+        fasta_out.write(identifier)
+        fasta_out.write("\n")
+
+        fasta_out.write(sequence)
+        fasta_out.write("\n")
+        fasta_out.write("\n")
+
+
+    # Writes the text to a .txt (This is mostly for testing the outputs of xml
+
+    fasta_out.close()
+
+
+
+
+
+# Only here for testing prior to R-shiny application
+def get_info():
+    # Gets information to the pass into main function
+    organism_name = input("Organism name: ")
+    gene_name = input("Gene name: ")
+    option = input("And/or (default is And)")
+
+    return organism_name + " OR " + gene_name if option.lower() == "or" else organism_name + " AND " + gene_name
 
 
 def main():
     test_identifier = "Opuntia AND rpl16"
 
     parse_ncbi(test_identifier)
+    # print(get_info())
 
     # Gve it a taxonomic id 9606
     # Download gene bank files for a taxonomic id
@@ -42,3 +69,10 @@ def main():
 if __name__=="__main__":
     main()
 
+# Commented out section
+# dict_keys(['GBSeq_locus', 'GBSeq_length', 'GBSeq_strandedness', 'GBSeq_moltype',
+# 'GBSeq_topology', 'GBSeq_division', 'GBSeq_update-date', 'GBSeq_create-date', 'GBSeq_definition',
+# 'GBSeq_primary-accession', 'GBSeq_accession-version', 'GBSeq_other-seqids', 'GBSeq_source', 'GBSeq_organism',
+# 'GBSeq_taxonomy', 'GBSeq_references', 'GBSeq_feature-table', 'GBSeq_sequence'])
+
+#
