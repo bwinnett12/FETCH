@@ -8,7 +8,6 @@ import contextlib
 
 # TODO - Have a cleaner way of sorting the files
 # TODO - Have a generalized function
-# TODO - Add comments to what is there so far
 # TODO - Add comments to the read me
 
 # TODO - Add exceptions to not double download or release
@@ -41,9 +40,10 @@ def parse_ncbi(query):
     return raw_data
 
 
+# TODO - Merge this into main app or just omit and have R shiny do thi
 # Only here for testing prior to R-shiny application
+# Gets information to the pass into main function
 def get_info():
-    # Gets information to the pass into main function
     organism_name = input("Organism name: ")
     gene_name = input("Gene name: ")
     option = input("And/or (default is And)")
@@ -71,29 +71,37 @@ def to_fasta(raw_data, output_location):
         fasta_out.write("\n")
 
 
-# TODO - Clean this up
 # TODO - Figure out a way to not use a temp file
 # TODO - Add exceptions in case it doesn't work
-def to_gb(raw_data, output_location):
+def to_gb(raw_data, output_folder):
 
+    # Creates a temp file and saves the parsed (ncbi) data to. If no temp file, creates one
+    # I know this is extra work, I'm just not sure how to do it cleaner
     with contextlib.suppress(FileExistsError):
         temp_file = open("./temp.txt", "x")
 
     temp_file = open("./temp.txt", "w")
     temp_file.write(raw_data)
 
+    # parses data from text and saves it as a line
     with open('./temp.txt', 'r') as raw_text:
         lines = raw_text.readlines()
 
+    # TODO - Allow the user to declare this in the app
+    # Variable is declared as to allow for it to be changed later
     output_folder = "./gb_files/"
 
+    # Declares a variable to write to. This will be changed to Locus ID after first iteration
     current_file = temp_file
 
+    # TODO - Refine and add exceptions
     for line in lines:
-
+        # By default, genebank files have "LOCUS ID". Gets the ID and creates a file for it. Sets writing location
         if 'LOCUS' in line:
-            split = line.split()
+            current_file.close()
 
+            # Splits line and declares the file id based on desired folder and Locus ID
+            split = line.split()
             gb_location = output_folder + split[1] + ".gb"
 
             if not os.path.isfile(gb_location):
@@ -101,34 +109,29 @@ def to_gb(raw_data, output_location):
 
             current_file = open(gb_location, "w")
 
-        print(current_file.name)
         current_file.write(line)
 
-    out_file = open(output_location, "w")
-    out_file.write(raw_data)
-
-    out_file.close()
-
+    # Removes temp file
     with contextlib.suppress(FileNotFoundError):
+        temp_file.close()
         os.remove("./temp.txt")
 
 
 def main():
-    test_identifier = "Opuntia AND rpl16"
-    # test_identifier = "NC_012920.1"
+    # test_identifier = "Opuntia AND rpl16"
+    test_identifier = "NC_012920.1"
     test_output = "./output.txt"
 
     test_parse = parse_ncbi(test_identifier)
 
     # to_fasta(test_parse, test_output)
     to_gb(test_parse, test_output)
-    # print(get_info())
 
     # Gve it a taxonomic id 9606
     # Download gene bank files for a taxonomic id
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
 
 # Commented out section
