@@ -1,7 +1,8 @@
 
 from Bio import Entrez, SeqIO
 import os
-import contextlib
+import sys
+# import contextlib
 
 # Debugging:
 # if its a xml -> Entrez.read(handle), if its text -> handle.read()
@@ -77,8 +78,10 @@ def to_gb(raw_data, output_folder):
 
     # Creates a temp file and saves the parsed (ncbi) data to. If no temp file, creates one
     # I know this is extra work, I'm just not sure how to do it cleaner
-    with contextlib.suppress(FileExistsError):
+    try:
         temp_file = open("./temp.txt", "x")
+    except FileExistsError as e:
+        pass
 
     temp_file = open("./temp.txt", "w")
     temp_file.write(raw_data)
@@ -86,10 +89,6 @@ def to_gb(raw_data, output_folder):
     # parses data from text and saves it as a line
     with open('./temp.txt', 'r') as raw_text:
         lines = raw_text.readlines()
-
-    # TODO - Allow the user to declare this in the app
-    # Variable is declared as to allow for it to be changed later
-    output_folder = "./gb_files/"
 
     # Declares a variable to write to. This will be changed to Locus ID after first iteration
     current_file = temp_file
@@ -112,20 +111,22 @@ def to_gb(raw_data, output_folder):
         current_file.write(line)
 
     # Removes temp file
-    with contextlib.suppress(FileNotFoundError):
+    try:
         temp_file.close()
         os.remove("./temp.txt")
+    except FileNotFoundError as e:
+        print(e)
 
 
 def main():
     # test_identifier = "Opuntia AND rpl16"
-    test_identifier = "NC_012920.1"
-    test_output = "./output.txt"
+    test_identifier = sys.argv[1]
+    test_output_folder = "./output/"
 
     test_parse = parse_ncbi(test_identifier)
 
     # to_fasta(test_parse, test_output)
-    to_gb(test_parse, test_output)
+    to_gb(test_parse, test_output_folder)
 
     # Gve it a taxonomic id 9606
     # Download gene bank files for a taxonomic id

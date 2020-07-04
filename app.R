@@ -1,9 +1,16 @@
 
 
+
 library(shiny)
 library(reticulate)
+library(system2)
 
-source_python("C:\\Users\\dwinn\\PycharmProjects\\ncbithing\\base.py")
+setwd("/home/bill/Projects/ncbifetcher/")
+
+
+
+fun <- system('python //home//bill//Projects//ncbifetcher//test.py hello', 
+               intern = TRUE, wait=FALSE)
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
@@ -53,33 +60,24 @@ ui <- fluidPage(
 
 
 # Define server logic required to draw a histogram ----
-server <- function(input, output) {
 
-  # Histogram of the Old Faithful Geyser Data ----
-  # with requested number of bins
-  # This expression that generates a histogram is wrapped in a call
-  # to renderPlot to indicate that:
-  #
-  # 1. It is "reactive" and therefore should be automatically
-  #    re-executed when inputs (input$bins) change
-  # 2. Its output type is a plot
+server <- function(input, output) {
   
   
   observeEvent(input$gobutton, {
-    if (test_indiv()) {
-      output$actionOutput <- renderText("Worked"
-      )
-    }
-  })
-  # 
-  # 
-  # 
-  # output$test_output <- renderText({
-  #   test_method(input$bins)
-  # 
-  # })
+    
+    full_thing <- paste("python fetcher.py", input$input_identifier, sep=" ")
 
+    testing_python <- system(full_thing, 
+      intern=TRUE, wait=FALSE)
+    
+    
+    output$actionOutput <-renderText(testing_python)
+
+    
+  })
 }
 
-shinyApp(ui, server)
 
+shinyApp(ui, server)
+ 
