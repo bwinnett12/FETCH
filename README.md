@@ -1,11 +1,9 @@
 # ncbifetcher
 
 ### Instructions:
-'''
 1) Update the setwd() to your location of the repository install. It should be listed as fetcher.py
 2) Run the app.R or load each piece individually
 3) In the blank write in the classifiers for gene bank files to install. Ex. NC_012920.1 downloads that file.
-'''
 
 
 ### Troubleshooting
