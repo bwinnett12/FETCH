@@ -28,4 +28,3 @@ be a download this package button.
 - [ ] Clean up R
 - [ ] Add optional folder location specifier
 - [ ] Add functionality and user customization for input
-- [ ]
