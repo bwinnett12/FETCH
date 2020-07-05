@@ -8,20 +8,22 @@
 
 ### Troubleshooting
 If the R packages are missing, they may need to be downloaded. Copy this command into the R terminal:
-'''
+```
 install.packages("shiny")
-'''
+```
 
 If the Python package for bio is missing, run this command in terminal:
-'''
+```
 python -m pip install bio Bio biopython
-'''
+```
+
+
 It may need to be ran as root. If you aren't able to use a terminal or if the terminal doesn't work as efficiently as
 it could be, there are alternatives. If using an IDE (such as PyCharm), hover over the package itself and there should
 be a download this package button.
 
 #### TODO
-- [x] rite a script that parses the ncbi
+- [x] Write a script that parses the ncbi
 - [x] Write a front-end that executes the script
 - [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
 - [ ] Clean up Python
