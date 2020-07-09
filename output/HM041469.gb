@@ -1,0 +1,61 @@
+LOCUS       HM041469                1189 bp    DNA     linear   PLN 03-MAY-2011
+DEFINITION  Nopalea sp. THH-2011 ribosomal protein L16-like (rpl16) gene,
+            partial sequence; chloroplast.
+ACCESSION   HM041469
+VERSION     HM041469.1
+KEYWORDS    .
+SOURCE      chloroplast Opuntia sp. THH-2011
+  ORGANISM  Opuntia sp. THH-2011
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; Caryophyllales; Cactineae; Cactaceae; Opuntioideae;
+            Opuntia; unclassified Opuntia.
+REFERENCE   1  (bases 1 to 1189)
+  AUTHORS   Hernandez-Hernandez,T., Hernandez,H.M., De-Nova,J.A., Puente,R.,
+            Eguiarte,L.E. and Magallon,S.
+  TITLE     Phylogenetic relationships and evolution of growth form in
+            Cactaceae (Caryophyllales, Eudicotyledoneae)
+  JOURNAL   Am. J. Bot. 98 (1), 44-61 (2011)
+   PUBMED   21613084
+REFERENCE   2  (bases 1 to 1189)
+  AUTHORS   Hernandez-Hernandez,T., Magallon,S.A., Hernandez,H.M., De-Nova,A.,
+            Puente,R. and Eguiarte,L.E.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-MAR-2010) Departamento de Botanica, Instituto de
+            Biologia, Universidad Nacional Autonoma de Mexico, 3er Circuito de
+            Ciudad Universitaria, Ciudad Universitaria, Coyoacan, Distrito
+            Federal C.P. 04510, Mexico
+FEATURES             Location/Qualifiers
+     source          1..1189
+                     /organism="Opuntia sp. THH-2011"
+                     /organelle="plastid:chloroplast"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:1001114"
+     gene            <1..>1189
+                     /gene="rpl16"
+     misc_feature    <1096..>1189
+                     /gene="rpl16"
+                     /note="similar to ribosomal protein L16"
+ORIGIN      
+        1 atatacgaaa aagtagagcc catagtatga agtatgaact aataactata gaactaataa
+       61 ccaactcatc gcatcacatt atctggatcc aaagaagcag tcaagatagg atattttggt
+      121 cctatcattg cagcaactga attttttttt cataaacaag aaatcaaatg agttgtcaag
+      181 caaaagaaaa aaaaaaaaga aaaatatact ttaagggagg gggatgcgga taaatggaaa
+      241 ggcgaaagaa agaaaaaaat gaatctaaat gatatacgat tccactatgt aaggtctttg
+      301 aatcatatca taaaagacaa tgtaataaag catgaataca gattcacaca taattatctg
+      361 gtatgaatct attcatagaa aaaagaaaaa agtaagaccc tccggccaat aaagactaag
+      421 agggttggct caagaacaaa gttcattaag ggctccattg tagaattcag acctaatcat
+      481 taatcaagaa gcgatgggaa cgatgtaatc catgaataca gaagattcaa ttgaaaaaga
+      541 atcctaatga ttcattggga aggatggcgg aacgaaccag agaccaattc atctattctg
+      601 aaaagtgata aactaatcct ataaaactaa aatagatatt gaaagagtaa atattcgccc
+      661 gcgaaaattc cttttttatt aaattgctca cattttattt tagcaatgca atctaataaa
+      721 atatatctat acaaaaaaat atagacaaac tatatatata atatatttca aatttcctta
+      781 tatatcctaa tataaaaata tctaataaat tagatgaata tcaaagaatc tattgattta
+      841 gtgtattatt aaatgtatat cttaattcaa tattattatt ctattcattt ttattattca
+      901 tttttattca ttttcaaatt tagaatatat taatctatat attaatttag aattctattc
+      961 taattcgaat tcaattttta aatattcata ttcaattaaa attgaaattt tttcattcgc
+     1021 gaggagccgg atgagaagaa actctcacgt ccggttctgt agtagaggtg gaattaagaa
+     1081 aaaaccatca actataaccc caaaagaacc agattctgta aacaacatag aggaagaatg
+     1141 aagggaatat cttatcgggg gaatcgtatt tgtttcggaa gatatgctc
+//
+

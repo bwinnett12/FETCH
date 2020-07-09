@@ -1,0 +1,61 @@
+LOCUS       HM041477                1197 bp    DNA     linear   PLN 03-MAY-2011
+DEFINITION  Cylindropuntia leptocaulis ribosomal protein L16-like (rpl16) gene,
+            partial sequence; chloroplast.
+ACCESSION   HM041477
+VERSION     HM041477.1
+KEYWORDS    .
+SOURCE      chloroplast Cylindropuntia leptocaulis
+  ORGANISM  Cylindropuntia leptocaulis
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; Caryophyllales; Cactineae; Cactaceae; Opuntioideae;
+            Cylindropuntia.
+REFERENCE   1  (bases 1 to 1197)
+  AUTHORS   Hernandez-Hernandez,T., Hernandez,H.M., De-Nova,J.A., Puente,R.,
+            Eguiarte,L.E. and Magallon,S.
+  TITLE     Phylogenetic relationships and evolution of growth form in
+            Cactaceae (Caryophyllales, Eudicotyledoneae)
+  JOURNAL   Am. J. Bot. 98 (1), 44-61 (2011)
+   PUBMED   21613084
+REFERENCE   2  (bases 1 to 1197)
+  AUTHORS   Hernandez-Hernandez,T., Magallon,S.A., Hernandez,H.M., De-Nova,A.,
+            Puente,R. and Eguiarte,L.E.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-MAR-2010) Departamento de Botanica, Instituto de
+            Biologia, Universidad Nacional Autonoma de Mexico, 3er Circuito de
+            Ciudad Universitaria, Ciudad Universitaria, Coyoacan, Distrito
+            Federal C.P. 04510, Mexico
+FEATURES             Location/Qualifiers
+     source          1..1197
+                     /organism="Cylindropuntia leptocaulis"
+                     /organelle="plastid:chloroplast"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:866983"
+     gene            <1..>1197
+                     /gene="rpl16"
+     misc_feature    <1096..>1197
+                     /gene="rpl16"
+                     /note="similar to ribosomal protein L16"
+ORIGIN      
+        1 ttgtgngnct cctgaagagt aggagcccct agtatgaagt atgaactaat aactatagaa
+       61 ctaataacca actcatcgca tcacattatc cggatccaaa aaagcagtca agataggata
+      121 ttttggtcct atcattgcag caactgaatt ttttttttca taaacaagaa atcgaatgag
+      181 ttgtcaagca aaagaaaaaa aaagaaaaat atactttaaa ggagggggat gcggataaat
+      241 ggaaaggcga aagaaagaaa aaaatgaatc taaatgatat aggattcccc tatgtaaggt
+      301 ctttgaatca tatcataaaa gacaatgtaa taaagcatga atacagattc ccacataatt
+      361 atctgatatg aatctattcc tagaaaaaag aaaaaagtaa gagcctccgg ccaataaaga
+      421 ctaagagggt tggctcaaga acaaagttca ttaaaagctc ccttgtagaa ttcagaccta
+      481 atcnttaatc aagaagcgat gggaacgatg taatccctga atacagaaga ttcaattgaa
+      541 aaagaatcct aatgattcat tgggaaggat ggcggaacga accagagacc aattcatcta
+      601 ttctgaaaag tgataaacta atcctataaa actaaaatag atattgaaag agtaaatatt
+      661 cgcccgcgaa atttcctttt ttattaaatt gctcatattt ttttttagca atgcaatcta
+      721 ataaaatata tctctacaaa aaaacataga caaactatat atatatatat atataatatt
+      781 tcaaattccc ttatatatcc aaatataaaa atatctaata aattagatga atatcaaaga
+      841 atctattgat ttagtgtatt attaaatgta tatcttaatt caatattatt attctattca
+      901 tttttattca ttttcaaatt tataatatat taatctatat attaatatag aattctattc
+      961 taattcgaat tcaattttta aatattcata ttcaattaaa attgaaattt tttcattcgc
+     1021 gaggagccgg atgagaagaa actctcatgt ccggttctgt agtagagatg gaattaagaa
+     1081 aaaaccatca actataaccc caaaagaacc ggattctgta aacaacatag aggaagaatg
+     1141 aagggaatat cttgtcgggg gaatcgatnn gtncggaant natgntcgcn gcgcgcc
+//
+

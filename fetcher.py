@@ -2,7 +2,6 @@
 __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
-import glob
 import os
 import sys
 from Bio import Entrez
@@ -12,16 +11,16 @@ from Bio import Entrez
 # if its a xml -> Entrez.read(handle), if its text -> handle.read()
 
 # TODO - Have a cleaner way of sorting the files
-# TODO - Have a generalized function
-# TODO - Add comments to the read me
-
 # TODO - Add exceptions to not double download or release
 # TODO - Have a file checking method BEFORE parsing the gene bank
+def parse_ncbi(query_from_user, email, out_type, out_location):
+    print(query_from_user)
+    query = query_from_user
 
-# REMINDER - Change emails
-def parse_ncbi(query, email):
+    # print("Opuntia AND rpl16" == query_from_user)
+    print(query_from_user == query)
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
-    Entrez.email = "wwinnett@iastate.edu"
+    Entrez.email = email
 
     # searches for those who fit your request
     handle = Entrez.esearch(db="nucleotide", term=query)
@@ -30,32 +29,28 @@ def parse_ncbi(query, email):
     record = Entrez.read(handle)
     gi_query = ",".join(record["IdList"])
 
+    rettype_input = ("gb", "fasta")[out_type == "fasta"]
+    retmode_input = ("text", "xml")[out_type == "fasta"]
+
     # Fetches those matching IDs from esearch
     # rettype gb = genebank(text as retmode), fasta = fasta (use xml as retmode)
-    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode="text")
+    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype=rettype_input, retmode=retmode_input)
 
-    # TODO make this part each function. Or alternatively have the function itself send this in
-    # raw_data = Entrez.read(handle) # if .xml
-    raw_data = handle.read()  # if text
-    print(raw_data[0])
+    # TODO make this part each function. Or alternatively have the function itself send this in\
+
+    if retmode_input == "xml":
+        raw_data = Entrez.read(handle)
+
+    else:
+        raw_data = handle.read()
+
+    return raw_data
 
     # if using an xml, then do "wb". if .txt do "w"
     # We are pulling a xml and then parsing it to get what parts we want as a fasta
 
+    print(raw_data)
     return raw_data
-
-
-# TODO - Something for user email
-# Gets information from R-shiny to then pass into main function
-def get_info():
-    organism_name = sys.argv[1]
-    gene_name = sys.argv[2]
-    option = sys.argv[3]
-
-    # For the email. I'm just using mine for testing purposes
-    # email = sys.argv[4]
-
-    return " ".join([organism_name, option, gene_name])
 
 
 # TODO - Make this usable
@@ -64,7 +59,11 @@ def get_info():
 # Allows for the user to download the files as fasta
 # Only allows for one large File. Probably won't add individuals unless requested
 def to_fasta(raw_data, output_location):
-    fasta_out = open(output_location, "w")
+    print("got to to_fasta")
+    fasta_out = open(output_location, "wb")
+    genes_written = []
+
+    # print(raw_data[0]["GBSeq_locus"])
 
     for i in range(int(len(raw_data))):
         identifier = "> " + raw_data[i]["GBSeq_locus"] + " " + raw_data[i]["GBSeq_organism"]
@@ -77,10 +76,17 @@ def to_fasta(raw_data, output_location):
         fasta_out.write("\n")
         fasta_out.write("\n")
 
+        genes_written += raw_data[i]["GBSeq_locus"]
+
+    return str(int(len(raw_data))) + " sequences written to a file. \n Sequences: " + genes_written
+
 
 # TODO - Figure out a way to not use a temp file
 # TODO - Add exceptions in case it doesn't work
 def to_gb(raw_data, output_folder):
+
+    if raw_data == "":
+        return "No files downloaded. Search query had no results"
 
     files_downloaded = []
     # Creates a temp file and saves the parsed (ncbi) data to. If no temp file, creates one
@@ -129,58 +135,41 @@ def to_gb(raw_data, output_folder):
     return str(len(files_downloaded)) + " files downloaded. Names are: " + str(files_downloaded)
 
 
-def battery(search, email, method, output_location):
+# Allows the user to delete all files from the folder
+# Mostly for testing purposes
+def delete_folder_contents():
+    num_deleted = 0
+    for file in os.scandir("./output/"):
+        if file.name.endswith(".gb"):
+            num_deleted += 1
+            os.unlink(file.path)
 
-    print("Got to battery")
-    output_location = "./output/"
-    method = "esame"
-    return_to_r = ""
+    return "Files Deleted: %d" % num_deleted
 
-    if method == "gb" or method == "esame":
-        print("Got to to_gb")
-        return_to_r = to_gb(parse_ncbi(search, email), output_location)
 
-    elif method == "fasta":
-        # TODO - make this return something
-        return_to_r = to_fasta(parse_ncbi(search, email), output_location)
+def battery(search, email, out_type, output_location):
+    if out_type == "gb" or out_type == "esame":
+        return_to_r = to_gb(parse_ncbi(search, email, "gb", output_location), output_location)
+
+    elif out_type == "fasta":
+        return_to_r = to_fasta(parse_ncbi(search, email, "fasta", output_location), output_location + "test.fa")
+
     else:
-        return_to_r = "Failed"
-        print("Failed")
         return "Failed"
 
-    print("exited function")
     return return_to_r
 
 
-def delete_folder_contents():
-    # files = glob.glob("./output/")
-    # for f in files:
-    #     os.remove(f)
-
-    for file in os.scandir("./output/"):
-        if file.name.endswith(".gb"):
-            os.unlink(file.path)
-
-
 def main():
-    test_identifier = "Opuntia AND rpl16"
-    r = 2
-    # test_output_folder = "./output/"
-    # print(battery(test_identifier, " ", "esame", " "))
-
     # delete_folder_contents()
+
+    # print(battery("Optunia AND rpl16", "Wwinnett@iastate.edu", "fasta", "./output/"))
+    # print(battery("Opuntia AND rpl16", "Wwinnett@iastate.edu", "gb", "./output/"))
+
+    # print(parse_ncbi("Opuntia AND rp116", "Wwinnett@iastate.edu", "gb", "./output/"))
+
+    r = 2
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
-# Commented out section
-# dict_keys(['GBSeq_locus', 'GBSeq_length', 'GBSeq_strandedness', 'GBSeq_moltype',
-# 'GBSeq_topology', 'GBSeq_division', 'GBSeq_update-date', 'GBSeq_create-date', 'GBSeq_definition',
-# 'GBSeq_primary-accession', 'GBSeq_accession-version', 'GBSeq_other-seqids', 'GBSeq_source', 'GBSeq_organism',
-# 'GBSeq_taxonomy', 'GBSeq_references', 'GBSeq_feature-table', 'GBSeq_sequence'])
-
-#

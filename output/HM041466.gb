@@ -1,0 +1,62 @@
+LOCUS       HM041466                1205 bp    DNA     linear   PLN 03-MAY-2011
+DEFINITION  Nopalea gaumeri ribosomal protein L16-like (rpl16) gene, partial
+            sequence; chloroplast.
+ACCESSION   HM041466
+VERSION     HM041466.1
+KEYWORDS    .
+SOURCE      chloroplast Opuntia gaumeri
+  ORGANISM  Opuntia gaumeri
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; Caryophyllales; Cactineae; Cactaceae; Opuntioideae;
+            Opuntia.
+REFERENCE   1  (bases 1 to 1205)
+  AUTHORS   Hernandez-Hernandez,T., Hernandez,H.M., De-Nova,J.A., Puente,R.,
+            Eguiarte,L.E. and Magallon,S.
+  TITLE     Phylogenetic relationships and evolution of growth form in
+            Cactaceae (Caryophyllales, Eudicotyledoneae)
+  JOURNAL   Am. J. Bot. 98 (1), 44-61 (2011)
+   PUBMED   21613084
+REFERENCE   2  (bases 1 to 1205)
+  AUTHORS   Hernandez-Hernandez,T., Magallon,S.A., Hernandez,H.M., De-Nova,A.,
+            Puente,R. and Eguiarte,L.E.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-MAR-2010) Departamento de Botanica, Instituto de
+            Biologia, Universidad Nacional Autonoma de Mexico, 3er Circuito de
+            Ciudad Universitaria, Ciudad Universitaria, Coyoacan, Distrito
+            Federal C.P. 04510, Mexico
+FEATURES             Location/Qualifiers
+     source          1..1205
+                     /organism="Opuntia gaumeri"
+                     /organelle="plastid:chloroplast"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:1001111"
+     gene            <1..>1205
+                     /gene="rpl16"
+     misc_feature    <1103..>1205
+                     /gene="rpl16"
+                     /note="similar to ribosomal protein L16"
+ORIGIN      
+        1 gctgtgatat acgaaanagt aagagcccat agtatgaagt atgaactaat aactatagaa
+       61 ctaataacca actcatcgca tcacattatc tggatccaaa gaagcagtca agataggata
+      121 ttttggtcct atcattgcag caactgaatt tttttttcat aaacaagaaa tcaaatgagt
+      181 tgtcaagcaa aagaaaaaaa aaaaaaaaaa tatacattaa aggaggggga tgcggataaa
+      241 tggaaaggcg aaagaaagaa aaaaatgaat ctaaatgata tacgattcca ctatgtaagg
+      301 tctttgaatc atatcataaa agacaatgta ataaagcatg aatacagatt cacacataat
+      361 tatctgaata tgaatctatt catagaaaaa agaaaaaagt aagaccctcc ggccaataaa
+      421 gactaaaggg gttggctcaa gaacaaagtt cattaagggc tccattgtag aattcagacc
+      481 taatcattaa tcaagaagcg atgggaacga tgtaatccat gaatacagaa gattcaattg
+      541 aaaaagaatc ctaatgattc attgggaagg atggcggaac gaaccagaga ccaattcatc
+      601 tattctgaaa agtgataaac taatcctata aaactaaaat agatattgaa agagtaaata
+      661 ttcgcccgcg aaaattcctt ttttattaaa ttgctcacat tttattttag caatgcaatc
+      721 taataaaata tatctataca aaaaaatata gacaaactat atatataata tatttcaaat
+      781 ttccttatat atcctaatat aaaaatatct aataaattag atgaatatca aagaatctat
+      841 tgatttagtg tattattaaa tgtatatctt aattcaatat tattattcta ttcattttta
+      901 ttattcattt ttattcattt tcaaatttag aatatattaa tctatatatt aatttagaat
+      961 tctattctaa ttcgaattca atttttaaat attcatattc aattaaaatt gaaatttttt
+     1021 cattcgcgag gagccggatg agaagaaact ctcacgtccg gttctgtagt agaggtggaa
+     1081 ttaagaaaaa accatcaact ataaccccaa aagaaccaga ttctgtaaac aacatagagg
+     1141 aagaatgaag ggaatatctt atcgggggaa tcgtatttgt ttcggaagat atgctctcag
+     1201 cacga
+//
+

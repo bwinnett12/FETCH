@@ -29,4 +29,6 @@ be a download this package button.
 - [ ] Clean up Python
 - [ ] Clean up R
 - [ ] Add optional folder location specifier
+- [ ] Add more operators
 - [ ] Add functionality and user customization for input
+- [ ] Add .fasta compatibility

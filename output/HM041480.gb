@@ -1,0 +1,61 @@
+LOCUS       HM041480                1153 bp    DNA     linear   PLN 03-MAY-2011
+DEFINITION  Opuntia microdasys ribosomal protein L16-like (rpl16) gene, partial
+            sequence; chloroplast.
+ACCESSION   HM041480
+VERSION     HM041480.1
+KEYWORDS    .
+SOURCE      chloroplast Opuntia microdasys
+  ORGANISM  Opuntia microdasys
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliopsida; eudicotyledons; Gunneridae;
+            Pentapetalae; Caryophyllales; Cactineae; Cactaceae; Opuntioideae;
+            Opuntia.
+REFERENCE   1  (bases 1 to 1153)
+  AUTHORS   Hernandez-Hernandez,T., Hernandez,H.M., De-Nova,J.A., Puente,R.,
+            Eguiarte,L.E. and Magallon,S.
+  TITLE     Phylogenetic relationships and evolution of growth form in
+            Cactaceae (Caryophyllales, Eudicotyledoneae)
+  JOURNAL   Am. J. Bot. 98 (1), 44-61 (2011)
+   PUBMED   21613084
+REFERENCE   2  (bases 1 to 1153)
+  AUTHORS   Hernandez-Hernandez,T., Magallon,S.A., Hernandez,H.M., De-Nova,A.,
+            Puente,R. and Eguiarte,L.E.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (17-MAR-2010) Departamento de Botanica, Instituto de
+            Biologia, Universidad Nacional Autonoma de Mexico, 3er Circuito de
+            Ciudad Universitaria, Ciudad Universitaria, Coyoacan, Distrito
+            Federal C.P. 04510, Mexico
+FEATURES             Location/Qualifiers
+     source          1..1153
+                     /organism="Opuntia microdasys"
+                     /organelle="plastid:chloroplast"
+                     /mol_type="genomic DNA"
+                     /db_xref="taxon:169217"
+     gene            <1..>1153
+                     /gene="rpl16"
+     misc_feature    <1079..>1153
+                     /gene="rpl16"
+                     /note="similar to ribosomal protein L16"
+ORIGIN      
+        1 gcccatagta tgaagtatga actaataact atagaactaa taaccaactc atcgcatcac
+       61 attatctgga tccaaagaag cagtcaagat aggatatttt ggtcctatca ttgcagcaac
+      121 tgaatttttt ttttcataaa caagaaatca aatgagttgt caagcaaaag aaaaaaaaaa
+      181 aaaaaaatat actttaaggg ggggggatgg ggataaaggg aaaggggaaa aaaaaaaaaa
+      241 aatgaatcta aatgatatac aattccacta tgaaaggtct ttgaatcata tcaaaaaaaa
+      301 caatgtaata aagcaggaat acagattccc acataattat ctgatatgaa tcttttcata
+      361 aaaaaaaaaa aaaagtaaga gcctccggcc aataaagact aagagggttg gctcaagaac
+      421 aaagttcatt aagggctcca ttgtagaatt cagacctaat cattaatcaa gaggcgatgg
+      481 gaacgatgta atccatgaat acagaagatt caattgaaaa agaatcctaa tgattcattg
+      541 ggaaggatgg cggaacgaac cagagaccaa ttcatctatt ctgaaaagtg aaaaactaat
+      601 cctataaaac taaaatagat attgaaagag taaatattcg cccgcgaaaa ttcctttttt
+      661 attaaattgc tcacatttta ttttagcaat gcaatctaat aaaatatatc tatacaaaaa
+      721 aatatagaca aactatatat ataatatatt tcaaatttcc ttatatatcc taatataaaa
+      781 atatctaata aattagatga atatcaaaga atctattgat ttagtgtatt attaaatgta
+      841 tatcttaatt caatattatt attctattca tttttattat tcatttttat tcattttcaa
+      901 atttagaata tattaatcta tatattaatt tataattcta ttctaattcg aattcaattt
+      961 ttaaatattc atattcaatt aaaattgaaa ttttttcatt cgcgaggagc cggatgagaa
+     1021 gaaactctca cgtccggttc tgtagtagag gtggaattaa gaaaaaacca tcaactataa
+     1081 ccccaaaaga accagattct gtaaacaaca tagaggaaga atgaagggaa tatcttatcg
+     1141 ggggatatcg tat
+//
+

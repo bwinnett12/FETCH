@@ -26,6 +26,10 @@ ui <- fluidPage(
       # Boolean operator to refine search
       radioButtons("boolean", "Boolean Operator for search: ", c("And" = "AND",
                                                                  "Or" = "OR")),
+      
+      checkboxGroupInput("output_type", "Type of output: ", 
+                        c("Genebank" = "gb", "Fasta" = "fasta")),
+      
       # Button for deleting file contents
       actionButton("button_delete", "delete")
       
@@ -42,11 +46,13 @@ ui <- fluidPage(
       # Gene Input
       textInput(inputId = "gene_input", label = "Gene: ", value = ""),
       
+      # Action button that triggers python execution
       actionButton("gobutton", "start"),
     
-      
+      # Code for broadcasting errors
       textOutput("errorOutput"),
       
+      # Code for tests. Will either delete or repurpose late
       textOutput("testOutput")
       
     )
@@ -54,8 +60,7 @@ ui <- fluidPage(
 )
 
 
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Server
 
 server <- function(input, output) {
@@ -64,7 +69,6 @@ server <- function(input, output) {
   arguments <- ""
   
   observeEvent(input$gobutton, {
-    
     
     # Species
     if (input$species_input == "") {
@@ -75,38 +79,57 @@ server <- function(input, output) {
     }
     
     # Boolean Operator
-    arguments <- paste(arguments, input$boolean, sep=" ")
+    if (input$species_input != "" && input$gene_input != ""){
+      arguments <- paste(arguments, input$boolean, sep=" ")
+    }
     
     # Gene
     if (input$gene_input == "") {
-      errors_full <- paste(errors_full, "missing gene", sep=" ")
+      errors_full <- paste(errors_full, "missing gene", sep="\n")
       arguments <- paste(arguments, "gene::null", sep=" ")
     } else {
-      arguments <- paste(arguments, input$gene_input, sep=" ")
+      arguments <- paste(arguments, input$gene_input, sep="\n")
     }
     
     # Email
     if (input$email_input == "") {
-      errors_full <- paste(errors_full, "missing email", sep=" ")
-    } 
+      errors_full <- paste(errors_full, "missing email", sep="\n")
+    }
     
-    setwd("/home/bill/Projects/ncbifetcher/")
-    source_python("fetcher.py")
+    # Output type
+    if (input$output_type == "") {
+      errors_full <- paste(errors_full, "missing output Type", sep="\n")
+    }
     
-    # Reports how many files were fetched
-    python_output <- battery(arguments, input$email_input, "esame", ".")
+    print(errors_full)
+    print("before if")
     
-    #Outputs errors
+    # if (errors_full == "") {
+    #   print(errors_full)
+    #   print("Still went here")
+    #   # Sources the folder for python to work
+    #   setwd("/home/bill/Projects/ncbifetcher/")
+    #   source_python("fetcher.py")
+    #   
+    #   # Reports how many files were fetched
+    #   python_output <- battery(arguments, input$email_input, "gb", ".")
+    #   
+    #   # An output for the ease of testing
+    #   output$testOutput <- renderText(python_output)
+    # }
+    
+    
+    # Outputs errors
     output$errorOutput <- renderText(errors_full)
     
-    # An output for the ease of testing
-    output$testOutput <- renderText(python_output)
+    
     
   })
   
+  # Deletes the folder where files are being dropped
   observeEvent(input$button_delete, {
-    delete_folder_contents()
-    
+    delete_output <- delete_folder_contents()
+    output$testOutput <- renderText(delete_output)
   })
   
 }
