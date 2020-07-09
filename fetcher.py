@@ -164,7 +164,7 @@ def main():
     # delete_folder_contents()
 
     # print(battery("Optunia AND rpl16", "Wwinnett@iastate.edu", "fasta", "./output/"))
-    # print(battery("Opuntia AND rpl16", "Wwinnett@iastate.edu", "gb", "./output/"))
+    # print(battery("NC_012920.1", "Wwinnett@iastate.edu", "gb", "./output/"))
 
     # print(parse_ncbi("Opuntia AND rp116", "Wwinnett@iastate.edu", "gb", "./output/"))
 
