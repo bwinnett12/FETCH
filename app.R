@@ -1,9 +1,12 @@
 library(shiny)
 library(reticulate)
 
+# These two need to be replaced with your python directory
 use_python("usr/bin/python")
 
+# This needs to be replaced by your project directory (where you pulled from)
 setwd("/home/bill/Projects/ncbifetcher/")
+
 source_python("fetcher.py")
 
 
@@ -64,16 +67,15 @@ ui <- fluidPage(
 # Server
 
 server <- function(input, output) {
-    
-  errors_full <- ""
-  arguments <- ""
   
   observeEvent(input$gobutton, {
     
+    errors_full <- ""
+    arguments <- ""
+    
     # Species
     if (input$species_input == "") {
-      errors_full <- paste(errors_full, "missing species", sep=" ")
-      arguments <- paste(arguments, "species::null", sep=" ")
+      errors_full <- paste(errors_full, "missing species", sep="\n")
     } else {
       arguments <- paste(arguments, input$species_input, sep=" ")
     }
@@ -86,52 +88,49 @@ server <- function(input, output) {
     # Gene
     if (input$gene_input == "") {
       errors_full <- paste(errors_full, "missing gene", sep="\n")
-      arguments <- paste(arguments, "gene::null", sep=" ")
     } else {
-      arguments <- paste(arguments, input$gene_input, sep="\n")
+      arguments <- paste(arguments, input$gene_input, sep=" ")
     }
     
     # Email
     if (input$email_input == "") {
-      errors_full <- paste(errors_full, "missing email", sep="\n")
+      errors_full <- paste(errors_full, "missing email", sep=" ")
     }
     
     # Output type
     if (input$output_type == "") {
-      errors_full <- paste(errors_full, "missing output Type", sep="\n")
+      errors_full <- paste(errors_full, "missing output Type", sep=" ")
     }
     
     print(errors_full)
     print("before if")
     
-    # if (errors_full == "") {
-    #   print(errors_full)
-    #   print("Still went here")
-    #   # Sources the folder for python to work
-    #   setwd("/home/bill/Projects/ncbifetcher/")
-    #   source_python("fetcher.py")
-    #   
-    #   # Reports how many files were fetched
-    #   python_output <- battery(arguments, input$email_input, "gb", ".")
-    #   
-    #   # An output for the ease of testing
-    #   output$testOutput <- renderText(python_output)
-    # }
+    # If there are no arguments, doesn't search and just shows error
+    # TODO - Fix this so it doesn't freak out if there is nothing inserted
+    if (arguments == "" || length(unlist(strsplit(arguments, ""))) == 0) {
+      output$errorOutput <- renderText("Arguments are empty")
+    }
+    else if (errors_full == "" && arguments != "") {
+
+      # Reports how many files were fetched
+      python_output <- battery(arguments, input$email_input, "gb", "./output/")
+
+      # Outputs file names fetched from python
+      output$errorOutput <- renderText(python_output)
+    } 
     
-    
-    # Outputs errors
-    output$errorOutput <- renderText(errors_full)
-    
-    
-    
+    # If not all of the blanks are filled; outputs what errors there are
+    else {
+      output$errorOutput <- renderText(errors_full)
+    }
+  
   })
   
   # Deletes the folder where files are being dropped
   observeEvent(input$button_delete, {
     delete_output <- delete_folder_contents()
-    output$testOutput <- renderText(delete_output)
+    output$errorOutput <- renderText(delete_output)
   })
-  
 }
 
 
