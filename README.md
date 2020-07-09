@@ -22,6 +22,9 @@ It may need to be ran as root. If you aren't able to use a terminal or if the te
 it could be, there are alternatives. If using an IDE (such as PyCharm), hover over the package itself and there should
 be a download this package button.
 
+##Roadmap
+https://github.com/bwinnett12/ncbifetcher
+
 #### TODO
 - [x] Write a script that parses the ncbi
 - [x] Write a front-end that executes the script
