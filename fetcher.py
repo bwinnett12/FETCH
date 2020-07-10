@@ -12,76 +12,76 @@ from Bio import Entrez
 
 # TODO - Have a cleaner way of sorting the files
 # TODO - Add exceptions to not double download or release
-# TODO - Have a file checking method BEFORE parsing the gene bank
-def parse_ncbi(query_from_user, email, out_type, out_location):
-    print(query_from_user)
-    query = query_from_user
+def parse_ncbi(query_from_user):
 
-    # print("Opuntia AND rpl16" == query_from_user)
-    print(query_from_user == query)
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
-    Entrez.email = email
+    Entrez.email = "wwinnett@iastate.edu"
 
     # searches for those who fit your request
-    handle = Entrez.esearch(db="nucleotide", term=query)
+    handle = Entrez.esearch(db="nucleotide", term=query_from_user)
 
     # Records those who match the query and then formats them so it can fetch them
     record = Entrez.read(handle)
     gi_query = ",".join(record["IdList"])
 
-    rettype_input = ("gb", "fasta")[out_type == "fasta"]
-    retmode_input = ("text", "xml")[out_type == "fasta"]
+    # TODO - add rhis back in
+    # rettype_input = ("gb", "fasta")[out_type == "fasta"]
+    # retmode_input = ("text", "xml")[out_type == "fasta"]
 
     # Fetches those matching IDs from esearch
     # rettype gb = genebank(text as retmode), fasta = fasta (use xml as retmode)
-    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype=rettype_input, retmode=retmode_input)
+    # handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype=rettype_input, retmode=retmode_input)
+    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode="xml")
 
-    # TODO make this part each function. Or alternatively have the function itself send this in\
-
-    if retmode_input == "xml":
-        raw_data = Entrez.read(handle)
-
-    else:
-        raw_data = handle.read()
+    # for xml... if using .txt it should be handle.read()
+    raw_data = Entrez.read(handle)
 
     return raw_data
 
     # if using an xml, then do "wb". if .txt do "w"
     # We are pulling a xml and then parsing it to get what parts we want as a fasta
 
-    print(raw_data)
-    return raw_data
+
+# interval_to = int(raw[0]["GBSeq_feature-table"][i]["GBFeature_intervals"][0]['GBInterval_to'])
+def write_gb_to_fasta(raw):
+
+    files_made = ""
+
+    # Loops through each locus fetched
+    for j in range(len(raw)):
+        # Variable for the to be named output location
+        out_loc = "./output/" + raw[j]["GBSeq_locus"] + ".fa"
+
+        if not os.path.isfile(out_loc):
+            current_file = open(out_loc, "x")
+        current_file = open(out_loc, "w")
+
+        # Loops through the features of each gene
+        for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
+
+            # Gene locus, Organism, Feature name
+            header = ": ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"], feature['GBFeature_key']])
+
+            # Goes from interval from to to
+            sequence = raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_from']):
+                                                int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()
+
+            # Writes each part individually
+            current_file.write(header + "\n")
+
+            # Loops through to 75 nucleotides per line
+            for n in range(0, len(sequence), 75):
+                current_file.write(sequence[n:n + 75] + "\n")
+
+            # Spacer
+            current_file.write(" " + "\n")
+
+        files_made += raw[j]["GBSeq_locus"] + ", "
+        current_file.close()
+    return "Files downloaded: " + files_made
 
 
-# TODO - Make this usable
-# TODO - Add comments
-# TODO - Turn it into a .fasta
-# Allows for the user to download the files as fasta
-# Only allows for one large File. Probably won't add individuals unless requested
-def to_fasta(raw_data, output_location):
-    print("got to to_fasta")
-    fasta_out = open(output_location, "wb")
-    genes_written = []
-
-    # print(raw_data[0]["GBSeq_locus"])
-
-    for i in range(int(len(raw_data))):
-        identifier = "> " + raw_data[i]["GBSeq_locus"] + " " + raw_data[i]["GBSeq_organism"]
-        sequence = raw_data[i]["GBSeq_sequence"].upper()
-
-        fasta_out.write(identifier)
-        fasta_out.write("\n")
-
-        fasta_out.write(sequence)
-        fasta_out.write("\n")
-        fasta_out.write("\n")
-
-        genes_written += raw_data[i]["GBSeq_locus"]
-
-    return str(int(len(raw_data))) + " sequences written to a file. \n Sequences: " + genes_written
-
-
-# TODO - Figure out a way to not use a temp file
+# TODO - Figure out a way to not use a temp file (REDO basically)
 # TODO - Add exceptions in case it doesn't work
 def to_gb(raw_data, output_folder):
 
@@ -147,24 +147,19 @@ def delete_folder_contents():
     return "Files Deleted: %d" % num_deleted
 
 
-def battery(search, email, out_type, output_location):
-    if out_type == "gb" or out_type == "esame":
-        return_to_r = to_gb(parse_ncbi(search, email, "gb", output_location), output_location)
+def battery(search_query):
 
-    elif out_type == "fasta":
-        return_to_r = to_fasta(parse_ncbi(search, email, "fasta", output_location), output_location + "test.fa")
-
-    else:
-        return "Failed"
+    return_to_r = write_gb_to_fasta(parse_ncbi(search_query))
 
     return return_to_r
 
 
 def main():
-    # delete_folder_contents()
+    test_query = "Opuntia AND rpl16"
 
     # print(battery("Optunia AND rpl16", "Wwinnett@iastate.edu", "fasta", "./output/"))
-    # print(battery("NC_012920.1", "Wwinnett@iastate.edu", "gb", "./output/"))
+    # print(battery("Opuntia AND rpl16", "Wwinnett@iastate.edu", "gb", "./output/"))
+    print(battery(test_query))
 
     # print(parse_ncbi("Opuntia AND rp116", "Wwinnett@iastate.edu", "gb", "./output/"))
 

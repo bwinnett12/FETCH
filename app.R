@@ -1,61 +1,53 @@
 library(shiny)
 library(reticulate)
 
-# These two need to be replaced with your python directory
-use_python("usr/bin/python")
+repl
 
-# This needs to be replaced by your project directory (where you pulled from)
 setwd("/home/bill/Projects/ncbifetcher/")
 
-source_python("fetcher.py")
 
-
+# Define UI for app that draws a histogram ----
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("An interesting title"),
+  titlePanel("Hello Shiny!"),
   
-  # Sidebar
+  # Sidebar layout with input and output definitions ----
   sidebarLayout(
     
-    # Sidebar panel (Email, Boolean operator, delete)
-    # Will include instructions
+    # Sidebar panel for inputs ----
     sidebarPanel(
       
-      # Email input
       textInput(inputId = "email_input", 
                 label = "Email - Always tell NCBI who you are", value = ""),
       
-      # Boolean operator to refine search
       radioButtons("boolean", "Boolean Operator for search: ", c("And" = "AND",
-                                                                 "Or" = "OR")),
+                                                                 "Or" = "OR"))
       
-      checkboxGroupInput("output_type", "Type of output: ", 
-                        c("Genebank" = "gb", "Fasta" = "fasta")),
+      # Input: Slider for the number of bins ----
       
-      # Button for deleting file contents
-      actionButton("button_delete", "delete")
       
+      # Entrez email - required for parsing
       
     ),
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    # Main panel for meat and potatoes of user input
+    # Main panel for displaying outputs ----
     mainPanel(
       
+      # Output: ----
+      textOutput("test_output"),
+      
       # Species Input
-      textInput(inputId = "species_input", label = "Species: ", value = ""),
+      textInput(inputId = "species_input", label = "Species", value = ""),
       
       # Gene Input
       textInput(inputId = "gene_input", label = "Gene: ", value = ""),
       
-      # Action button that triggers python execution
       actionButton("gobutton", "start"),
     
-      # Code for broadcasting errors
+      
       textOutput("errorOutput"),
       
-      # Code for tests. Will either delete or repurpose late
       textOutput("testOutput")
       
     )
@@ -63,31 +55,50 @@ ui <- fluidPage(
 )
 
 
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Server
+# Define server logic required to draw a histogram ----
 
 server <- function(input, output) {
   
+  
   observeEvent(input$gobutton, {
     
-    errors_full <- ""
-    arguments <- ""
+    # full_thing <- paste("python fetcher.py",
+    #                     input$species_input, # Species
+    #                     input$gene_input,    # Gene
+    #                     input$boolean,       # Boolean Operator
+    #                     # input$email, 	     # Email address (Required by Entrez)
+    #                     
+    #                     sep=" ")
+    # 
+    # testing_python <- system(full_thing, 
+    #                          intern=TRUE, wait=FALSE)
+    # 
+    # 
+    # output$actionOutput <-renderText(testing_python)
+    })
+    
+  
+  errors_full <- ""
+  arguments <- ""
+  
+  observeEvent(input$gobutton, {
+    
     
     # Species
     if (input$species_input == "") {
-      errors_full <- paste(errors_full, "missing species", sep="\n")
+      errors_full <- paste(errors_full, "missing species", sep=" ")
+      arguments <- paste(arguments, "species::null", sep=" ")
     } else {
       arguments <- paste(arguments, input$species_input, sep=" ")
     }
     
     # Boolean Operator
-    if (input$species_input != "" && input$gene_input != ""){
-      arguments <- paste(arguments, input$boolean, sep=" ")
-    }
+    arguments <- paste(arguments, input$boolean, sep=" ")
     
     # Gene
     if (input$gene_input == "") {
-      errors_full <- paste(errors_full, "missing gene", sep="\n")
+      errors_full <- paste(errors_full, "missing gene", sep=" ")
+      arguments <- paste(arguments, "gene::null", sep=" ")
     } else {
       arguments <- paste(arguments, input$gene_input, sep=" ")
     }
@@ -95,42 +106,22 @@ server <- function(input, output) {
     # Email
     if (input$email_input == "") {
       errors_full <- paste(errors_full, "missing email", sep=" ")
-    }
-    
-    # Output type
-    if (input$output_type == "") {
-      errors_full <- paste(errors_full, "missing output Type", sep=" ")
-    }
-    
-    print(errors_full)
-    print("before if")
-    
-    # If there are no arguments, doesn't search and just shows error
-    # TODO - Fix this so it doesn't freak out if there is nothing inserted
-    if (arguments == "" || length(unlist(strsplit(arguments, ""))) == 0) {
-      output$errorOutput <- renderText("Arguments are empty")
-    }
-    else if (errors_full == "" && arguments != "") {
-
-      # Reports how many files were fetched
-      python_output <- battery(arguments, input$email_input, "gb", "./output/")
-
-      # Outputs file names fetched from python
-      output$errorOutput <- renderText(python_output)
+      arguments <- paste(arguments, "email::null", sep=" ")
     } 
-    
-    # If not all of the blanks are filled; outputs what errors there are
     else {
-      output$errorOutput <- renderText(errors_full)
+      arguments <- paste(arguments, input$email_input, sep=" ")
     }
-  
+    
+    arguments <- paste("python fetcher.py", arguments, sep=" ")
+    
+    
+    
+    output$errorOutput <- renderText(errors_full)
+    
+    output$testOutput <- renderText(arguments)
+    
   })
   
-  # Deletes the folder where files are being dropped
-  observeEvent(input$button_delete, {
-    delete_output <- delete_folder_contents()
-    output$errorOutput <- renderText(delete_output)
-  })
 }
 
 
