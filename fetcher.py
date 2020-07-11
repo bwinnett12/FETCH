@@ -46,9 +46,9 @@ def parse_ncbi(query_from_user):
 def write_gb_to_fasta(raw):
 
     files_made = ""
-
     # Loops through each locus fetched
-    for j in range(len(raw)):
+    for j in range(0, len(raw)):
+
         # Variable for the to be named output location
         out_loc = "./output/" + raw[j]["GBSeq_locus"] + ".fa"
 
@@ -60,11 +60,23 @@ def write_gb_to_fasta(raw):
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
 
             # Gene locus, Organism, Feature name
-            header = ": ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"], feature['GBFeature_key']])
+            try:
+                header = " ".join([">", raw[j]["GBSeq_locus"], feature['GBFeature_key'],
+                                  feature['GBFeature_quals'][0]['GBQualifier_value'], raw[j]["GBSeq_organism"]])
+            except KeyError:
+                header = ": ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"]])
 
             # Goes from interval from to to
-            sequence = raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_from']):
-                                                int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()
+            sequence = raw[j]["GBSeq_sequence"]
+
+            try:
+                sequence = sequence[int(feature["GBFeature_intervals"][0]['GBInterval_from']):
+                                    int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()
+
+            except KeyError:
+                print(feature)
+
+                sequence = feature['GBFeature_intervals'][0]['GBInterval_point']
 
             # Writes each part individually
             current_file.write(header + "\n")
@@ -155,10 +167,8 @@ def battery(search_query):
 
 
 def main():
-    test_query = "Opuntia AND rpl16"
+    test_query = "NC_012920"
 
-    # print(battery("Optunia AND rpl16", "Wwinnett@iastate.edu", "fasta", "./output/"))
-    # print(battery("Opuntia AND rpl16", "Wwinnett@iastate.edu", "gb", "./output/"))
     print(battery(test_query))
 
     # print(parse_ncbi("Opuntia AND rp116", "Wwinnett@iastate.edu", "gb", "./output/"))
