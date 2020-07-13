@@ -6,6 +6,8 @@ from fetcher import parse_ncbi
 # interval_to = int(raw[0]["GBSeq_feature-table"][i]["GBFeature_intervals"][0]['GBInterval_to'])
 def write_gb_to_fasta(raw):
 
+    files_made = ""
+
     # Loops through each locus fetched
     for j in range(0, len(raw)):
 
@@ -20,11 +22,31 @@ def write_gb_to_fasta(raw):
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
 
             # Gene locus, Organism, Feature name
-            try:
-                header = " ".join([">", raw[j]["GBSeq_locus"], feature['GBFeature_key'],
-                                  feature['GBFeature_quals'][0]['GBQualifier_value'], raw[j]["GBSeq_organism"]])
-            except KeyError:
-                header = ": ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"]])
+            if feature['GBFeature_key'] != "gene" or feature['GBFeature_key'] == "source":
+
+                try:
+                    header = " ".join([">", raw[j]["GBSeq_locus"], feature['GBFeature_quals'][0]['GBQualifier_value'],
+                                       " - ", feature['GBFeature_quals'][2]['GBQualifier_value'],
+                                       raw[j]["GBSeq_organism"]])
+
+                    # Here for testing.. Ignore this
+                    # if len(raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_from']):
+                    #                 int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()) == 0:
+                    #     print("zero length: " + feature['GBFeature_quals'][2]['GBQualifier_value'])
+                    #     print("At: " + raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_to'])])
+
+                # For the genes that aren't setup the same as the others
+                except KeyError:
+                    header = " ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"]])
+                    print("Key Error")
+
+                # For the genes that aren't setup the same as the others
+                except IndexError:
+                    print(feature['GBFeature_quals'])
+                    print("Index Error")
+
+            else:
+                continue
 
             # Goes from interval from to to
             sequence = raw[j]["GBSeq_sequence"]
@@ -48,7 +70,10 @@ def write_gb_to_fasta(raw):
             # Spacer
             current_file.write(" " + "\n")
 
+        files_made += raw[j]["GBSeq_locus"] + ", "
         current_file.close()
+
+    return "Files downloaded: " + files_made
 
 
 def main():
@@ -58,6 +83,7 @@ def main():
     write_gb_to_fasta(parsed)
 
     # print(parsed[0]["GBSeq_feature-table"][3]['GBFeature_quals'][0]['GBQualifier_value'])
+
 
 if __name__ == "__main__":
     main()

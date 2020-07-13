@@ -23,15 +23,15 @@ it could be, there are alternatives. If using an IDE (such as PyCharm), hover ov
 be a download this package button.
 
 ##Roadmap
-https://github.com/bwinnett12/ncbifetcher
+- Parse the gene bank and download raw data
+- Save the raw data to a .gb file
+- Create a fasta out of the individual pieces to it
 
 #### TODO
 - [x] Write a script that parses the ncbi
 - [x] Write a front-end that executes the script
 - [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
 - [ ] Clean up Python
-- [ ] Clean up R
 - [ ] Add optional folder location specifier
-- [ ] Add more operators
-- [ ] Add functionality and user customization for input
-- [ ] Add .fasta compatibility
+- [ ] Factor the misc features and notes into the fasta somehow
+- [ ] Figure out why some have locations of letters or negative lengths
