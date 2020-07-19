@@ -22,7 +22,7 @@ It may need to be ran as root. If you aren't able to use a terminal or if the te
 it could be, there are alternatives. If using an IDE (such as PyCharm), hover over the package itself and there should
 be a download this package button.
 
-##Roadmap
+## Roadmap
 - Parse the gene bank and download raw data
 - Save the raw data to a .gb file
 - Create a fasta out of the individual pieces to it
@@ -33,7 +33,7 @@ be a download this package button.
 #### TODO
 - [x] Write a script that parses the ncbi
 - [x] Write a front-end that executes the script
-- [o] Configure it to work on the LavrovLab server or some form of university funded hosting
+- [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
 - [x] Clean up Python
 - [x] Add optional folder location specifier
 - [x] Factor the misc features and notes into the fasta somehow
