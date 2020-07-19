@@ -3,16 +3,10 @@ __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
 import os
-import sys
 from Bio import Entrez
 
 
-# Debugging:
-# if its a xml -> Entrez.read(handle), if its text -> handle.read()
-
-# TODO - Have a cleaner way of sorting the files
-# TODO - Add exceptions to not double download or release
-def parse_ncbi(query_from_user):
+def parse_ncbi(query_from_user, output_type):
 
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
     Entrez.email = "wwinnett@iastate.edu"
@@ -24,99 +18,113 @@ def parse_ncbi(query_from_user):
     record = Entrez.read(handle)
     gi_query = ",".join(record["IdList"])
 
-    # TODO - add rhis back in
-    # rettype_input = ("gb", "fasta")[out_type == "fasta"]
-    # retmode_input = ("text", "xml")[out_type == "fasta"]
+    retmode_input = ("text", "xml")[output_type == "fasta"]
 
     # Fetches those matching IDs from esearch
     # rettype gb = genebank(text as retmode), fasta = fasta (use xml as retmode)
-    # handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype=rettype_input, retmode=retmode_input)
-    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode="xml")
+    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode=retmode_input)
 
     # for xml... if using .txt it should be handle.read()
-    raw_data = Entrez.read(handle)
+    if output_type == "fasta":
+        raw_data = Entrez.read(handle)
+    else:
+        raw_data = handle.read()
 
     return raw_data
 
-    # if using an xml, then do "wb". if .txt do "w"
-    # We are pulling a xml and then parsing it to get what parts we want as a fasta
 
 
-# interval_to = int(raw[0]["GBSeq_feature-table"][i]["GBFeature_intervals"][0]['GBInterval_to'])
-def write_gb_to_fasta(raw):
-    files_made = ""
+
+def write_gb_to_fasta(raw, output_location):
+    files_downloaded = []
 
     # Loops through each locus fetched
     for j in range(0, len(raw)):
 
+        # Saves the sequence to avoid calling it repeatedly
+        sequence = raw[j]["GBSeq_sequence"]
+
         # Variable for the to be named output location
-        out_loc = "./output/" + raw[j]["GBSeq_locus"] + ".fa"
+        out_loc = output_location + raw[j]["GBSeq_locus"] + ".fa"
 
         if not os.path.isfile(out_loc):
             current_file = open(out_loc, "x")
+            files_downloaded.append(raw[j]["GBSeq_locus"])
         current_file = open(out_loc, "w")
 
         # Loops through the features of each gene
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
 
             # Gene locus, Organism, Feature name
-            if feature['GBFeature_key'] != "gene" or feature['GBFeature_key'] == "source":
+            if feature['GBFeature_key'] == "gene" or feature['GBFeature_key'] == "source":
+                continue
 
+            else:
                 try:
-                    header = " ".join([">", raw[j]["GBSeq_locus"], feature['GBFeature_quals'][0]['GBQualifier_value'],
-                                       " - ", feature['GBFeature_quals'][2]['GBQualifier_value'],
+                    locus = raw[j]["GBSeq_locus"]
+                    product_name = gene_name = ""
+
+                    # Since the ncbi doesn't have an official indexing location for each component (product and
+                    # gene name), has to iterate through each spot where it could be (All under qual)
+                    for n, qual in enumerate((raw[j]["GBSeq_feature-table"][i]['GBFeature_quals'])):
+                        if qual['GBQualifier_name'] == "product":
+                            product_name = qual['GBQualifier_value']
+
+                        if qual['GBQualifier_name'] == "gene":
+                            gene_name = qual['GBQualifier_value']
+
+                    header = " ".join([">", locus, product_name,
+                                       " - ", gene_name,
                                        raw[j]["GBSeq_organism"]])
 
-                    # Here for testing.. Ignore this
-                    # if len(raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_from']):
-                    #                 int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()) == 0:
-                    #     print("zero length: " + feature['GBFeature_quals'][2]['GBQualifier_value'])
-                    #     print("At: " + raw[j]["GBSeq_sequence"][int(feature["GBFeature_intervals"][0]['GBInterval_to'])])
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
-                    header = " ".join([">", raw[j]["GBSeq_locus"], raw[j]["GBSeq_organism"]])
-                    print("Key Error")
+                    print("Header - Key Error")
 
                 # For the genes that aren't setup the same as the others
                 except IndexError:
-                    print(feature['GBFeature_quals'])
-                    print("Index Error")
+                    print("Header - Index Error")
 
-            else:
-                continue
+                try:
+                    # Many genes are listed as "complimentary". So gets sequence if they are on the other strand
+                    if int(feature["GBFeature_intervals"][0]['GBInterval_from']) > \
+                       int(feature["GBFeature_intervals"][0]['GBInterval_to']):
 
-            # Goes from interval from to to
-            sequence = raw[j]["GBSeq_sequence"]
+                        sequence_gene = sequence[int(feature["GBFeature_intervals"][0]['GBInterval_to']) - 1:
+                                                 int(feature["GBFeature_intervals"][0]['GBInterval_from']) - 1].upper()
 
-            try:
-                sequence = sequence[int(feature["GBFeature_intervals"][0]['GBInterval_from']):
-                                    int(feature["GBFeature_intervals"][0]['GBInterval_to'])].upper()
+                    # Gets sequence of gene from index locations of source strand
+                    else:
+                        sequence_gene = sequence[int(feature["GBFeature_intervals"][0]['GBInterval_from']) - 1:
+                                                 int(feature["GBFeature_intervals"][0]['GBInterval_to']) - 1].upper()
 
-            except KeyError:
-                print(feature)
+                # This is an exception for in case the entry is a feature or similar with only one location index
+                except KeyError:
+                    print("Sequence - KeyError")
+                    sequence = feature['GBFeature_intervals'][0]['GBInterval_point']
 
-                sequence = feature['GBFeature_intervals'][0]['GBInterval_point']
+                # Writes each part individually
+                current_file.write(header + "\n")
 
-            # Writes each part individually
-            current_file.write(header + "\n")
+                # Loops through to 75 nucleotides per line
+                for n in range(0, len(sequence_gene), 75):
+                    current_file.write(sequence_gene[n:n + 75] + "\n")
 
-            # Loops through to 75 nucleotides per line
-            for n in range(0, len(sequence), 75):
-                current_file.write(sequence[n:n + 75] + "\n")
+                # Spacer
+                current_file.write(" " + "\n")
 
-            # Spacer
-            current_file.write(" " + "\n")
-
-        files_made += raw[j]["GBSeq_locus"] + ", "
+        # files_made += raw[j]["GBSeq_locus"] + ", "
         current_file.close()
 
-    return "Files downloaded: " + files_made
+    return str(len(files_downloaded)) + " files downloaded. Names are: " + str(files_downloaded)
 
 
-# TODO - Figure out a way to not use a temp file (REDO basically)
-# TODO - Add exceptions in case it doesn't work
-def to_gb(raw_data, output_folder):
+
+
+
+# TODO - Remove use of temp file
+def write_to_gb(raw_data, output_folder):
 
     if raw_data == "":
         return "No files downloaded. Search query had no results"
@@ -126,7 +134,7 @@ def to_gb(raw_data, output_folder):
     # I know this is extra work, but I'm just not sure how to do it cleaner
     try:
         temp_file = open("./temp.txt", "x")
-    except FileExistsError as e:
+    except FileExistsError:
         pass
 
     temp_file = open("./temp.txt", "w")
@@ -139,7 +147,7 @@ def to_gb(raw_data, output_folder):
     # Declares a variable to write to. This will be changed to Locus ID after first iteration
     current_file = temp_file
 
-    # TODO - Refine and add exceptions
+
     for line in lines:
         # By default, genebank files have "LOCUS ID". Gets the ID and creates a file for it. Sets writing location
         if 'LOCUS' in line:
@@ -173,28 +181,26 @@ def to_gb(raw_data, output_folder):
 def delete_folder_contents():
     num_deleted = 0
     for file in os.scandir("./output/"):
-        if file.name.endswith(".gb"):
+        if file.name.endswith(".gb") or file.name.endswith(".fa"):
             num_deleted += 1
             os.unlink(file.path)
 
     return "Files Deleted: %d" % num_deleted
 
 
-def battery(search_query):
-
-    return_to_r = write_gb_to_fasta(parse_ncbi(search_query))
-
+# Something to run to run both functions. Ultimately will be done using R
+def battery(search_query, output_folder):
+    return_to_r = write_gb_to_fasta(parse_ncbi(search_query, "fasta"), output_folder)
+    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
     return return_to_r
 
 
 def main():
-    # test_query = "NC_012920"
-    test_query = "Opuntia AND rpl16"
+    # delete_folder_contents()
+    test_gene = "MN114084.1"
+    output_folder = "./output/"
 
-    print(battery(test_query))
-
-    # print(parse_ncbi("Opuntia AND rp116", "Wwinnett@iastate.edu", "gb", "./output/"))
-
+    print(battery(test_gene, output_folder))
     r = 2
 
 

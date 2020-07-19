@@ -26,12 +26,16 @@ be a download this package button.
 - Parse the gene bank and download raw data
 - Save the raw data to a .gb file
 - Create a fasta out of the individual pieces to it
+- Create a battery that does both processes
+
+- Create a database that stores each gene parsed into a database
 
 #### TODO
 - [x] Write a script that parses the ncbi
 - [x] Write a front-end that executes the script
-- [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
-- [ ] Clean up Python
-- [ ] Add optional folder location specifier
-- [ ] Factor the misc features and notes into the fasta somehow
-- [ ] Figure out why some have locations of letters or negative lengths
+- [o] Configure it to work on the LavrovLab server or some form of university funded hosting
+- [x] Clean up Python
+- [x] Add optional folder location specifier
+- [x] Factor the misc features and notes into the fasta somehow
+- [x] Create a database to store all of the sequences and genes
+
