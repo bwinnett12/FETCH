@@ -25,17 +25,17 @@ be a download this package button.
 ## Roadmap
 - Parse the gene bank and download raw data
 - Save the raw data to a .gb file
-- Create a fasta out of the individual pieces to it
-- Create a battery that does both processes
+- Create a fasta out of the individual pieces to it (as .fa)
+- Create an amino acid version of the fasta (as .faa)
+- Create a battery that does all three processes
 
 - Create a database that stores each gene parsed into a database
 
 #### TODO
 - [x] Write a script that parses the ncbi
-- [x] Write a front-end that executes the script
-- [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
 - [x] Clean up Python
 - [x] Add optional folder location specifier
 - [x] Factor the misc features and notes into the fasta somehow
-- [x] Create a database to store all of the sequences and genes
-
+- [x] Get an amino acid version of the other fasta
+- [ ] Create a database to store all of the sequences and genes
+- [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
