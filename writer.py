@@ -89,6 +89,9 @@ def write_to_fasta(raw, output_location, chart):
             if feature['GBFeature_key'] == "gene" or feature['GBFeature_key'] == "source":
                 continue
 
+            # if feature['GBFeature_key'] == "D-loop":
+                # continue
+
             else:
                 try:
                     locus = raw[j]["GBSeq_locus"]
@@ -103,6 +106,10 @@ def write_to_fasta(raw, output_location, chart):
                         if qual['GBQualifier_name'] == "gene":
                             gene_name = qual['GBQualifier_value']
 
+                        if qual['GBQualifier_name'] == 'note':
+                            product_name = qual['GBQualifier_value']
+
+
                     header = " ".join([">", locus, product_name,
                                        "-", gene_name,
                                        raw[j]["GBSeq_organism"]])
@@ -111,10 +118,14 @@ def write_to_fasta(raw, output_location, chart):
                 # For the genes that aren't setup the same as the others
                 except KeyError:
                     print("Header - Key Error")
+                    print(feature)
+                    continue
 
                 # For the genes that aren't setup the same as the others
                 except IndexError:
                     print("Header - Index Error")
+                    print(feature)
+                    continue
 
                 try:
                     # Many genes are listed as "complimentary". So gets sequence if they are on the other strand
@@ -135,7 +146,10 @@ def write_to_fasta(raw, output_location, chart):
                     sequence_gene = feature['GBFeature_intervals'][0]['GBInterval_point']
 
                 # Writes each part individually
-                current_file.write(header + "\n")
+                try:
+                    current_file.write(header + "\n")
+                except UnboundLocalError:
+                    print(feature)
 
                 # Loops through to 75 nucleotides per line
                 for n in range(0, len(sequence_gene), 75):
@@ -159,10 +173,15 @@ def write_to_fasta(raw, output_location, chart):
 # Makes a .fasta that includes a protein copy with it
 # Piggy tails off the DNA to fasta version (The only difference is the translated sequence)
 def write_translation_to_fasta(locus, header, sequence, chart, out_file):
-    translated_protein = files_downloaded = ""
+    translated_protein = ""
+    files_downloaded = ""
 
     for i in range(0, len(sequence) if len(sequence) % 3 == 0 else len(sequence) - (len(sequence) % 3), 3):
-        translated_protein += chart[sequence[i:i+3]]
+        try:
+            translated_protein += chart[sequence[i:i+3]]
+
+        except KeyError:
+            print(header)
 
 
     out_file.write(header + "\n")

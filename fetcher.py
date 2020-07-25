@@ -39,7 +39,7 @@ def parse_ncbi(query_from_user, output_type):
 def delete_folder_contents():
     num_deleted = 0
     for file in os.scandir("./output/"):
-        if file.name.endswith(".gb") or file.name.endswith(".fa"):
+        if file.name.endswith(".gb") or file.name.endswith(".fa") or file.name.endswith(".faa"):
             num_deleted += 1
             os.unlink(file.path)
 
@@ -75,13 +75,15 @@ def battery(search_query, output_folder):
 
 def main():
 
-
     # delete_folder_contents()
-    test_gene = "QEHR01000001"
+    test_genes = ['NC_005089', 'NC_000845.1', 'NC_008944.1', 'NC_024511']
     output_folder = "./output/"
 
-    print(battery(test_gene, output_folder))
-    r = 2
+    for i in range(len(test_genes)):
+        print(battery(test_genes[i], output_folder))
+    # r = 2
+
+    # print(battery('NC_008944.1', output_folder))
 
 
 if __name__ == "__main__":
