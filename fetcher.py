@@ -4,10 +4,10 @@ __email__ = "bwinnett12@gmail.com"
 
 import os
 from Bio import Entrez
-from writer import write_to_gb, write_to_fasta
+from writer import write_to_gb, write_to_fasta, write_fasta_to_individual
 
 
-def parse_ncbi(query_from_user, output_type):
+def parse_ncbi(query_from_user, output_type, out_loc):
 
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
     Entrez.email = "wwinnett@iastate.edu"
@@ -34,14 +34,23 @@ def parse_ncbi(query_from_user, output_type):
     return raw_data
 
 
+# Creates folders for each of the accession numbers
+def create_folders(id_list, out_folder):
+    print(id_list)
+    for entry in range(len(id_list)):
+        if not os.path.isdir(out_folder + id_list[entry]):
+            os.makedirs(out_folder + id_list[entry])
+
+
 # Allows the user to delete all files from the folder
 # Mostly for testing purposes
 def delete_folder_contents():
     num_deleted = 0
-    for file in os.scandir("./output/"):
-        if file.name.endswith(".gb") or file.name.endswith(".fa") or file.name.endswith(".faa"):
+    for filename in os.listdir("./output/"):
+        if filename.endswith(".gb") or filename.endswith(".fa") or filename.endswith(".faa") or os.path.isdir(filename):
             num_deleted += 1
-            os.unlink(file.path)
+            # os.unlink(file.path)
+            print(filename)
 
     return "Files Deleted: %d" % num_deleted
 
@@ -68,22 +77,30 @@ def battery(search_query, output_folder):
         'TGC': 'C', 'TGT': 'C', 'TGA': '_', 'TGG': 'W',
     }
 
-    return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta"), output_folder, table)
-    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
+
+    return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta", output_folder), output_folder, table)
+    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text", output_folder), output_folder)
+
     return return_to_r
 
 
 def main():
 
-    # delete_folder_contents()
-    test_genes = ['NC_005089', 'NC_000845.1', 'NC_008944.1', 'NC_024511']
+
+    delete_folder_contents()
+
+
+    test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
     output_folder = "./output/"
+
+
+    # TODO - place this somewhere better
+    create_folders(test_genes, output_folder)
 
     for i in range(len(test_genes)):
         print(battery(test_genes[i], output_folder))
-    # r = 2
 
-    # print(battery('NC_008944.1', output_folder))
+
 
 
 if __name__ == "__main__":

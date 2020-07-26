@@ -3,6 +3,7 @@ __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
 import os
+from Bio import SeqIO
 
 def write_to_gb(raw_data, output_folder):
 
@@ -27,7 +28,6 @@ def write_to_gb(raw_data, output_folder):
     # Declares a variable to write to. This will be changed to Locus ID after first iteration
     current_file = temp_file
 
-
     for line in lines:
         # By default, genebank files have "LOCUS ID". Gets the ID and creates a file for it. Sets writing location
         if 'LOCUS' in line:
@@ -35,7 +35,7 @@ def write_to_gb(raw_data, output_folder):
 
             # Splits line and declares the file id based on desired folder and Locus ID
             split = line.split()
-            gb_location = output_folder + split[1] + ".gb"
+            gb_location = output_folder + split[1] + "/" + split[1] + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
@@ -68,7 +68,7 @@ def write_to_fasta(raw, output_location, chart):
         sequence = raw[j]["GBSeq_sequence"]
 
         # Variable for the to be named output location
-        out_loc = output_location + raw[j]["GBSeq_locus"] + ".fa"
+        out_loc = output_location + raw[j]["GBSeq_locus"] + "/" + raw[j]["GBSeq_locus"] + ".fa"
 
         # For the DNA version
         if not os.path.isfile(out_loc):
@@ -89,9 +89,6 @@ def write_to_fasta(raw, output_location, chart):
             if feature['GBFeature_key'] == "gene" or feature['GBFeature_key'] == "source":
                 continue
 
-            # if feature['GBFeature_key'] == "D-loop":
-                # continue
-
             else:
                 try:
                     locus = raw[j]["GBSeq_locus"]
@@ -110,21 +107,21 @@ def write_to_fasta(raw, output_location, chart):
                             product_name = qual['GBQualifier_value']
 
 
-                    header = " ".join([">", locus, product_name,
-                                       "-", gene_name,
+                    header = " ".join([">", locus, gene_name,
+                                       "-", product_name,
                                        raw[j]["GBSeq_organism"]])
 
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
                     print("Header - Key Error")
-                    print(feature)
+                    # print(feature)
                     continue
 
                 # For the genes that aren't setup the same as the others
                 except IndexError:
                     print("Header - Index Error")
-                    print(feature)
+                    # print(feature)
                     continue
 
                 try:
@@ -149,7 +146,7 @@ def write_to_fasta(raw, output_location, chart):
                 try:
                     current_file.write(header + "\n")
                 except UnboundLocalError:
-                    print(feature)
+                    print(UnboundLocalError)
 
                 # Loops through to 75 nucleotides per line
                 for n in range(0, len(sequence_gene), 75):
@@ -164,6 +161,10 @@ def write_to_fasta(raw, output_location, chart):
         # files_made += raw[j]["GBSeq_locus"] + ", "
         current_file_protein.close()
         current_file.close()
+
+
+        write_fasta_to_individual(output_location + raw[j]["GBSeq_locus"] + "/" +
+                                  raw[j]["GBSeq_locus"] + ".fa", output_location)
 
     return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
         str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
@@ -192,4 +193,30 @@ def write_translation_to_fasta(locus, header, sequence, chart, out_file):
     out_file.write(" " + "\n")
 
     return files_downloaded if files_downloaded != "" else ""
+
+
+
+def write_fasta_to_individual(file, output_folder):
+
+    print(file)
+    for record in SeqIO.parse(file, "fasta"):
+        if record.description.split()[1] == '-':
+            continue
+
+        location = output_folder + record.id + "/" + record.description.split()[1] + ".fa"
+
+        if not os.path.isfile(location):
+            current_file = open(location, "x")
+        current_file = open(location, "w")
+
+        current_file.write(record.description + "\n")
+
+        # Loops through to 75 nucleotides per line
+        for n in range(0, len(record.seq), 75):
+            current_file.write(str(record.seq[n:n + 75]) + "\n")
+
+        # Spacer
+        current_file.write(" " + "\n")
+
+
 
