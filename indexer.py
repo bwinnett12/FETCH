@@ -1,5 +1,4 @@
 
-import mysql.connector
 
 def add_to_index(index, term):
     if index.lower() == "species":
@@ -9,22 +8,62 @@ def add_to_index(index, term):
     else:
         return "Failed to index"
 
-    file.write(term + "\n")
+    if not check_index(index, term):
+        file.write(term + "\n")
+    file.close()
+
+
+def delete_from_index(index, term):
+    if index.lower() == "species":
+        file = open("./Indexes/species.lst", "r+")
+    elif index == "gene":
+        file = open("./Indexes/genes.lst", "r+")
+
+    lines = file.readlines()
+    file.close()
+
+    if index.lower() == "species":
+        file = open("./Indexes/species.lst", "w")
+    elif index == "gene":
+        file = open("./Indexes/genes.lst", "w")
+
+    for line in lines:
+        if term not in line:
+            file.write(line)
+
     file.close()
 
 
 
-def quicksort(R):
-    if len(R) < 2:
-        return R
 
-    pivot = R[0]
-    low = quicksort([i for i in R if i < pivot])
-    high = quicksort([i for i in R if i > pivot])
-    return low + [pivot] + high
+def check_index(index, term):
+
+    if index.lower() == "species":
+        file = open("./Indexes/species.lst")
+    elif index == "gene":
+        file = open("./Indexes/genes.lst")
+
+    for line in file.readlines():
+        if term in line:
+            file.close()
+            return True
+    file.close()
+    return False
+
+
 
 
 def refresh(index):
+    def quicksort(R):
+        if len(R) < 2:
+            return R
+
+        pivot = R[0]
+        low = quicksort([i for i in R if i < pivot])
+        high = quicksort([i for i in R if i > pivot])
+        return low + [pivot] + high
+
+    
     if index.lower() == "species":
         file = open("./Indexes/species.lst", "r+")
     elif index == "gene":
@@ -32,13 +71,19 @@ def refresh(index):
     else:
         return "Failed to index"
 
-    
+    lines = quicksort(file.readlines())
+    file.close()
 
+    if index.lower() == "species":
+        file = open("./Indexes/species.lst", "w")
+    elif index == "gene":
+        file = open("./Indexes/genes.lst", "w")
+    else:
+        return "Failed to index"
 
-
-    R_to_sort = []
-    for line in file.readlines():
-        R_to_sort.append(line)
+    for line in lines:
+        file.write(line)
+    file.close()
 
 
 
@@ -47,15 +92,24 @@ def refresh(index):
 
 def main():
     test_index = "Species"
-    test_term = "Hi. I'm phil"
+    test_term = "C"
 
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
 
     print("Hello")
-    add_to_index(test_index, test_term)
+    # add_to_index(test_index, test_term)
+    # delete_from_index(test_index, test_term)
 
     refresh(test_index)
+
+
+
+
+
+
+
+
 
     # mydb = mysql.connector.connect(
     #     host="localhost",

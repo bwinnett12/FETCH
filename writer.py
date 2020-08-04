@@ -4,6 +4,7 @@ __email__ = "bwinnett12@gmail.com"
 
 import os
 from Bio import SeqIO
+from indexer import *
 
 def write_to_gb(raw_data, output_folder):
 
@@ -112,6 +113,7 @@ def write_to_fasta(raw, output_location, chart):
                                        raw[j]["GBSeq_organism"]])
 
 
+
                 # For the genes that aren't setup the same as the others
                 except KeyError:
                     print("Header - Key Error")
@@ -159,8 +161,12 @@ def write_to_fasta(raw, output_location, chart):
                     locus, header, sequence_gene, chart, current_file_protein))
 
         # files_made += raw[j]["GBSeq_locus"] + ", "
+
         current_file_protein.close()
         current_file.close()
+
+        add_to_index("gene", gene_name)
+        add_to_index("species", raw[j]["GBSeq_organism"])
 
 
         write_fasta_to_individual(output_location + raw[j]["GBSeq_locus"] + "/" +
