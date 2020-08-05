@@ -1,32 +1,24 @@
 
-
+# Adds a term to index. Either to genes.lst or species.lst
 def add_to_index(index, term):
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst", "a+")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst", "a+")
-    else:
-        return "Failed to index"
+    file = open_spec(index, "a+")
 
     if not check_index(index, term):
         file.write(term + "\n")
     file.close()
 
 
+# Deletes a term from the index. Either to genes.lst or species.lst
 def delete_from_index(index, term):
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst", "r+")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst", "r+")
-
+    # Stores all of the data in "lines"
+    file = open_spec(index, "r+")
     lines = file.readlines()
     file.close()
 
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst", "w")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst", "w")
+    # Opens the list to write to it
+    file = open_spec(index, "w")
 
+    # writes every line EXCEPT the one that needs to be deleted
     for line in lines:
         if term not in line:
             file.write(line)
@@ -35,13 +27,11 @@ def delete_from_index(index, term):
 
 
 
-
+# Function that cycles through the .lst to see if the term is there
+# Helper just for saving time
 def check_index(index, term):
 
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst")
+    file = open_spec(index, "r")
 
     for line in file.readlines():
         if term in line:
@@ -52,8 +42,12 @@ def check_index(index, term):
 
 
 
-
+# Does normalization on lists
+# Sorts alphabetically,
+# TODO - set up refreshing of downloaded files
 def refresh(index):
+
+    # Common recursive sort algortihm for sorting through each index
     def quicksort(R):
         if len(R) < 2:
             return R
@@ -63,45 +57,43 @@ def refresh(index):
         high = quicksort([i for i in R if i > pivot])
         return low + [pivot] + high
 
-    
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst", "r+")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst", "r+")
-    else:
-        return "Failed to index"
+
+    file = open_spec(index, "r+")
 
     lines = quicksort(file.readlines())
     file.close()
 
-    if index.lower() == "species":
-        file = open("./Indexes/species.lst", "w")
-    elif index == "gene":
-        file = open("./Indexes/genes.lst", "w")
-    else:
-        return "Failed to index"
+    file = open_spec(index, "w")
 
     for line in lines:
         file.write(line)
     file.close()
 
 
+# A helper method for simplifying all of the other methods
+def open_spec(index, method):
+    if index.lower() == "species":
+        return open("./Indexes/species.lst", method)
+    elif index.lower() == "gene":
+        return open("./Indexes/gene.lst", method)
+    else:
+        return ""
 
 
 
 
 def main():
-    test_index = "Species"
+    test_index = "atp"
     test_term = "C"
 
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
 
     print("Hello")
-    # add_to_index(test_index, test_term)
+    add_to_index(test_index, test_term)
     # delete_from_index(test_index, test_term)
 
-    refresh(test_index)
+    # refresh(test_index)
 
 
 
@@ -147,6 +139,7 @@ def main():
     #     print(row)
 
     # mydb.commit()
+
 
 
 if __name__ == '__main__':
