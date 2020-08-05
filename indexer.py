@@ -1,7 +1,8 @@
 
 # Adds a term to index. Either to genes.lst or species.lst
 def add_to_index(index, term):
-    file = open_spec(index, "a+")
+
+    file = open(open_clarify(index), "a+")
 
     if not check_index(index, term):
         file.write(term + "\n")
@@ -11,12 +12,13 @@ def add_to_index(index, term):
 # Deletes a term from the index. Either to genes.lst or species.lst
 def delete_from_index(index, term):
     # Stores all of the data in "lines"
-    file = open_spec(index, "r+")
+    file = open(open_clarify(index), "r+")
+
     lines = file.readlines()
     file.close()
 
     # Opens the list to write to it
-    file = open_spec(index, "w")
+    file = open(open_clarify(index), "w")
 
     # writes every line EXCEPT the one that needs to be deleted
     for line in lines:
@@ -26,15 +28,14 @@ def delete_from_index(index, term):
     file.close()
 
 
-
 # Function that cycles through the .lst to see if the term is there
 # Helper just for saving time
 def check_index(index, term):
 
-    file = open_spec(index, "r")
+    file = open(open_clarify(index), "r")
 
     for line in file.readlines():
-        if term in line:
+        if line == (term + "\n"):
             file.close()
             return True
     file.close()
@@ -57,13 +58,12 @@ def refresh(index):
         high = quicksort([i for i in R if i > pivot])
         return low + [pivot] + high
 
-
-    file = open_spec(index, "r+")
+    file = open(open_clarify(index), "r+")
 
     lines = quicksort(file.readlines())
     file.close()
 
-    file = open_spec(index, "w")
+    file = open(open_clarify(index), "w")
 
     for line in lines:
         file.write(line)
@@ -71,20 +71,20 @@ def refresh(index):
 
 
 # A helper method for simplifying all of the other methods
-def open_spec(index, method):
+def open_clarify(index):
     if index.lower() == "species":
-        return open("./Indexes/species.lst", method)
+        return "./Indexes/species.lst"
     elif index.lower() == "gene":
-        return open("./Indexes/gene.lst", method)
+        return "./Indexes/gene.lst"
     else:
-        return ""
+        return False
 
 
 
 
 def main():
-    test_index = "atp"
-    test_term = "C"
+    test_index = "species"
+    test_term = "Ca"
 
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
@@ -102,7 +102,8 @@ def main():
 
 
 
-
+def sandbox():
+    r = 2
     # mydb = mysql.connector.connect(
     #     host="localhost",
     #     user="root",
