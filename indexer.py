@@ -5,8 +5,10 @@ def add_to_index(index, term):
     file = open(open_clarify(index), "a+")
 
     if not check_index(index, term):
-        file.write(term + "\n")
+        file.write(";" + term + "\n")
     file.close()
+
+    refresh(index)
 
 
 # Deletes a term from the index. Either to genes.lst or species.lst
@@ -35,11 +37,29 @@ def check_index(index, term):
     file = open(open_clarify(index), "r")
 
     for line in file.readlines():
-        if line == (term + "\n"):
+        if line == (term + "\n") or line == (";" + term + "\n"):
             file.close()
             return True
     file.close()
     return False
+
+
+def reset_index(index):
+    r = 2
+    file = open(open_clarify(index), "r+")
+    lines = file.readlines()
+    file.close()
+
+    file = open(open_clarify(index), "w")
+
+    for line in lines:
+        if line[0] == ";":
+            file.write(line)
+        else:
+            file.write(";" + line)
+    file.close()
+
+
 
 
 
@@ -48,7 +68,7 @@ def check_index(index, term):
 # TODO - set up refreshing of downloaded files
 def refresh(index):
 
-    # Common recursive sort algortihm for sorting through each index
+    # Common recursive sort algorithm for sorting through each index
     def quicksort(R):
         if len(R) < 2:
             return R
@@ -70,6 +90,7 @@ def refresh(index):
     file.close()
 
 
+
 # A helper method for simplifying all of the other methods
 def open_clarify(index):
     if index.lower() == "species":
@@ -84,13 +105,15 @@ def open_clarify(index):
 
 def main():
     test_index = "species"
-    test_term = "Ca"
+    test_term = "Catt"
 
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
 
     print("Hello")
     add_to_index(test_index, test_term)
+
+    reset_index(test_index)
     # delete_from_index(test_index, test_term)
 
     # refresh(test_index)
