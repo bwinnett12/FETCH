@@ -4,6 +4,7 @@ def add_to_index(index, term):
 
     file = open(open_clarify(index), "a+")
 
+    # If term not there, appends to end
     if not check_index(index, term):
         file.write(";" + term + "\n")
     file.close()
@@ -37,13 +38,14 @@ def check_index(index, term):
     file = open(open_clarify(index), "r")
 
     for line in file.readlines():
-        if line == (term + "\n") or line == (";" + term + "\n"):
+        if line == (term + "\n") or line == (";" + term + "\n") or line == term or line == (";" + term):
             file.close()
             return True
     file.close()
     return False
 
 
+# Sets the index back to none selected (;gene vs gene)
 def reset_index(index):
     r = 2
     file = open(open_clarify(index), "r+")
@@ -52,6 +54,7 @@ def reset_index(index):
 
     file = open(open_clarify(index), "w")
 
+    # Adds a semicolon if there isn't a semicolon
     for line in lines:
         if line[0] == ";":
             file.write(line)
@@ -79,12 +82,12 @@ def refresh(index):
         return low + [pivot] + high
 
     file = open(open_clarify(index), "r+")
-
     lines = quicksort(file.readlines())
     file.close()
 
     file = open(open_clarify(index), "w")
 
+    # Has to rewrite everything
     for line in lines:
         file.write(line)
     file.close()
