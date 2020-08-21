@@ -36,7 +36,6 @@
 ;lrRNA
 ;mt-Rnr1
 ;mt-Rnr2
-;srRNA
 ;trnA
 ;trnC
 ;trnD
@@ -56,6 +55,5 @@
 ;trnS1
 ;trnS2
 ;trnT
-;trnV
 ;trnW
 ;trnY

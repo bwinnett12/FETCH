@@ -1,6 +1,7 @@
 
 # Adds a term to index. Either to genes.lst or species.lst
 import os
+import glob
 
 
 def add_to_index(index, term):
@@ -49,43 +50,57 @@ def check_index(index, term):
 
 
 # Sets the index back to none selected (;gene vs gene)
-def reset_index(index):
+def reset_indexes():
 
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
-    def get_file_list():
+    def get_file_list(index):
 
         lines = open(open_clarify(index), "r")
         path = "./storage/"
 
         fulllist = []
 
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith(".fa"):
-                    if os.path.join(root, file).split("/")[-1] not in lines and\
-                            os.path.join(root, file).split("/")[-1] not in fulllist:
-                        fulllist.append(os.path.join(root, file).split("/")[-1])
-        return fulllist
+        if index == "species":
+            for file in glob.glob("./storage/gb/*.gb"):
+                fulllist.append(file.split("/")[-1].split(".")[0])
+            for file in glob.glob("./storage/full_fa/*.fa"):
+                fulllist.append(file.split("/")[-1].split(".")[0])
 
-    full_list = get_file_list()
+        if index == "genes":
+            print(index)
+            for file in glob.glob("./storage/fa/*.fa"):
+                fulllist.append(file.split("/")[-1].split("_")[0])
+                # print(file.split("/")[-1].split("_")[0])
+            for file in glob.glob("./storage/faa/*.faa"):
+                fulllist.append(file.split("/")[-1].split("_")[0])
+                # print(file.split("/")[-1].split("_")[0])
 
-    for entry in full_list:
-        add_to_index(index, entry)
 
+        print(fulllist)
+        return list(set(fulllist))
 
-    file = open(open_clarify(index), "r+")
-    lines = file.readlines()
-    file.close()
+    for index in ["species", "genes"]:
 
-    file = open(open_clarify(index), "w")
+        full_list = get_file_list(index)
 
-    # Adds a semicolon if there isn't a semicolon
-    for line in lines:
-        if line[0] == ";":
-            file.write(line)
-        else:
-            file.write(";" + line)
-    file.close()
+        for entry in full_list:
+            add_to_index(index, entry)
+
+        file = open(open_clarify(index), "r+")
+        lines = file.readlines()
+        file.close()
+
+        file = open(open_clarify(index), "w")
+
+        # Adds a semicolon if there isn't a semicolon
+        for line in lines:
+            if line[0] == ";":
+                file.write(line)
+            else:
+                file.write(";" + line)
+        file.close()
+        refresh(index)
+
 
 
 
@@ -146,6 +161,7 @@ def main():
     # delete_from_index(test_index, test_term)
 
     refresh(test_index)
+    reset_indexes()
 
 
 
