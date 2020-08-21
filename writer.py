@@ -169,6 +169,11 @@ def write_to_fasta(raw, output_location, chart):
                 # Spacer
                 current_file.write(" " + "\n")
 
+                # TODO - Fix this
+                print(out_loc)
+                write_fasta_to_individual(out_loc, output_location, "fa")
+                write_fasta_to_individual(out_loc_protein, output_location, "faa")
+
                 amino_downloaded.append(write_translation_to_fasta(
                     header, sequence_gene, chart, current_file_protein))
 
@@ -180,9 +185,7 @@ def write_to_fasta(raw, output_location, chart):
         add_to_index("species", raw[j]["GBSeq_organism"])
 
 
-        # TODO - Fix this
-        # write_fasta_to_individual(output_location + raw[j]["GBSeq_locus"] + "/" +
-        #                           raw[j]["GBSeq_locus"] + ".fa", output_location)
+
 
     return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
         str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
@@ -214,13 +217,18 @@ def write_translation_to_fasta(header, sequence, chart, out_file):
 
 
 
-def write_fasta_to_individual(file, output_folder):
+def write_fasta_to_individual(file, output_folder, option):
 
     for record in SeqIO.parse(file, "fasta"):
         if record.description.split()[1] == '-':
             continue
 
-        location = output_folder + record.id + "/" + record.description.split()[1] + ".fa"
+        print(record.description.split())
+        if option == "fa":
+            location = output_folder + "fa/" + record.description.split()[1] + "_" + file.split("/")[-1]
+        elif option == "faa":
+            location = output_folder + "faa/" + record.description.split()[1] + "_" + file.split("/")[-1]
+
 
         if not os.path.isfile(location):
             current_file = open(location, "x")
