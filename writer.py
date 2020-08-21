@@ -6,6 +6,7 @@ import os
 from Bio import SeqIO
 from indexer import *
 
+# TODO - This one works but is inefficient
 def write_to_gb(raw_data, output_folder):
 
     if raw_data == "":
@@ -31,17 +32,18 @@ def write_to_gb(raw_data, output_folder):
 
     for line in lines:
         # By default, genebank files have "LOCUS ID". Gets the ID and creates a file for it. Sets writing location
-        if 'LOCUS' in line:
+        if 'ORGANISM' in line:
             current_file.close()
 
             # Splits line and declares the file id based on desired folder and Locus ID
-            split = line.split()
-            gb_location = output_folder + split[1] + "/" + split[1] + ".gb"
+            # split = line.split()
+            # print("THIS ONE: ", split)
+            gb_location = output_folder + "gb/" + ' '.join(line.split()[1:]) + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
                 current_file = open(gb_location, "x")
-                files_downloaded.append(split[1])
+                # files_downloaded.append(split[1])
 
             current_file = open(gb_location, "w")
 
@@ -66,10 +68,11 @@ def write_to_fasta(raw, output_location, chart):
     for j in range(0, len(raw)):
 
         # Saves the sequence to avoid calling it repeatedly
+        # TODO - Change name from full_fa
         sequence = raw[j]["GBSeq_sequence"]
 
         # Variable for the to be named output location
-        out_loc = output_location + raw[j]["GBSeq_locus"] + "/" + raw[j]["GBSeq_locus"] + ".fa"
+        out_loc = output_location + "full_fa/" + raw[j]["GBSeq_organism"] + ".fa"
 
         # For the DNA version
         if not os.path.isfile(out_loc):
@@ -78,10 +81,11 @@ def write_to_fasta(raw, output_location, chart):
         current_file = open(out_loc, "w")
 
         # For the amino acid version
-        if not os.path.isfile(out_loc + "a"):
-            current_file_protein = open(out_loc + "a", "x")
+        out_loc_protein = output_location + "full_faa/" + raw[j]["GBSeq_organism"] + ".faa"
+        if not os.path.isfile(out_loc_protein):
+            current_file_protein = open(out_loc_protein, "x")
             amino_downloaded.append(raw[j]["GBSeq_locus"])
-        current_file_protein = open(out_loc + "a", "w")
+        current_file_protein = open(out_loc_protein, "w")
 
         # Loops through the features of each gene
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
@@ -103,6 +107,7 @@ def write_to_fasta(raw, output_location, chart):
 
                         if qual['GBQualifier_name'] == "gene":
                             gene_name = qual['GBQualifier_value']
+                            add_to_index("genes", gene_name)
 
                         if qual['GBQualifier_name'] == 'note':
                             product_name = qual['GBQualifier_value']
@@ -123,6 +128,7 @@ def write_to_fasta(raw, output_location, chart):
                 # For the genes that aren't setup the same as the others
                 except IndexError:
                     print("Header - Index Error")
+
                     # print(feature)
                     continue
 
@@ -144,6 +150,12 @@ def write_to_fasta(raw, output_location, chart):
                     print("Sequence - KeyError")
                     sequence_gene = feature['GBFeature_intervals'][0]['GBInterval_point']
 
+
+
+
+
+
+
                 # Writes each part individually
                 try:
                     current_file.write(header + "\n")
@@ -158,19 +170,19 @@ def write_to_fasta(raw, output_location, chart):
                 current_file.write(" " + "\n")
 
                 amino_downloaded.append(write_translation_to_fasta(
-                    locus, header, sequence_gene, chart, current_file_protein))
+                    header, sequence_gene, chart, current_file_protein))
 
         # files_made += raw[j]["GBSeq_locus"] + ", "
 
         current_file_protein.close()
         current_file.close()
 
-        add_to_index("gene", gene_name)
         add_to_index("species", raw[j]["GBSeq_organism"])
 
 
-        write_fasta_to_individual(output_location + raw[j]["GBSeq_locus"] + "/" +
-                                  raw[j]["GBSeq_locus"] + ".fa", output_location)
+        # TODO - Fix this
+        # write_fasta_to_individual(output_location + raw[j]["GBSeq_locus"] + "/" +
+        #                           raw[j]["GBSeq_locus"] + ".fa", output_location)
 
     return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
         str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
@@ -179,7 +191,7 @@ def write_to_fasta(raw, output_location, chart):
 
 # Makes a .fasta that includes a protein copy with it
 # Piggy tails off the DNA to fasta version (The only difference is the translated sequence)
-def write_translation_to_fasta(locus, header, sequence, chart, out_file):
+def write_translation_to_fasta(header, sequence, chart, out_file):
     translated_protein = ""
     files_downloaded = ""
 
@@ -204,7 +216,6 @@ def write_translation_to_fasta(locus, header, sequence, chart, out_file):
 
 def write_fasta_to_individual(file, output_folder):
 
-    print(file)
     for record in SeqIO.parse(file, "fasta"):
         if record.description.split()[1] == '-':
             continue

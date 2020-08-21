@@ -50,7 +50,29 @@ def check_index(index, term):
 
 # Sets the index back to none selected (;gene vs gene)
 def reset_index(index):
-    r = 2
+
+    # Gets a list of all the fasta... Uses this to update the indexes with whats found
+    def get_file_list():
+
+        lines = open(open_clarify(index), "r")
+        path = "./storage/"
+
+        fulllist = []
+
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file.endswith(".fa"):
+                    if os.path.join(root, file).split("/")[-1] not in lines and\
+                            os.path.join(root, file).split("/")[-1] not in fulllist:
+                        fulllist.append(os.path.join(root, file).split("/")[-1])
+        return fulllist
+
+    full_list = get_file_list()
+
+    for entry in full_list:
+        add_to_index(index, entry)
+
+
     file = open(open_clarify(index), "r+")
     lines = file.readlines()
     file.close()
@@ -83,28 +105,6 @@ def refresh(index):
         low = quicksort([i for i in R if i < pivot])
         high = quicksort([i for i in R if i > pivot])
         return low + [pivot] + high
-
-    # Gets a list of all the fasta... Uses this to update the indexes with whats found
-    def get_file_list():
-
-        lines = open(open_clarify(index), "r")
-        path = "./output/"
-
-        fulllist = []
-
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                if file.endswith(".fa"):
-                    if os.path.join(root, file).split("/")[-1] not in lines and\
-                            os.path.join(root, file).split("/")[-1] not in fulllist:
-                        fulllist.append(os.path.join(root, file).split("/")[-1])
-        return fulllist
-
-    full_list = get_file_list()
-
-    for entry in full_list:
-        add_to_index(index, entry)
-
 
 
     file = open(open_clarify(index), "r+")
