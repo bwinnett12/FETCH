@@ -1,5 +1,8 @@
 
 # Adds a term to index. Either to genes.lst or species.lst
+import os
+
+
 def add_to_index(index, term):
 
     file = open(open_clarify(index), "a+")
@@ -9,7 +12,7 @@ def add_to_index(index, term):
         file.write(";" + term + "\n")
     file.close()
 
-    refresh(index)
+    # refresh(index)
 
 
 # Deletes a term from the index. Either to genes.lst or species.lst
@@ -81,6 +84,29 @@ def refresh(index):
         high = quicksort([i for i in R if i > pivot])
         return low + [pivot] + high
 
+    # Gets a list of all the fasta... Uses this to update the indexes with whats found
+    def get_file_list():
+
+        lines = open(open_clarify(index), "r")
+        path = "./output/"
+
+        fulllist = []
+
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                if file.endswith(".fa"):
+                    if os.path.join(root, file).split("/")[-1] not in lines and\
+                            os.path.join(root, file).split("/")[-1] not in fulllist:
+                        fulllist.append(os.path.join(root, file).split("/")[-1])
+        return fulllist
+
+    full_list = get_file_list()
+
+    for entry in full_list:
+        add_to_index(index, entry)
+
+
+
     file = open(open_clarify(index), "r+")
     lines = quicksort(file.readlines())
     file.close()
@@ -98,8 +124,8 @@ def refresh(index):
 def open_clarify(index):
     if index.lower() == "species":
         return "./Indexes/species.lst"
-    elif index.lower() == "gene":
-        return "./Indexes/gene.lst"
+    elif index.lower() == "genes":
+        return "./Indexes/genes.lst"
     else:
         return False
 
@@ -107,19 +133,19 @@ def open_clarify(index):
 
 
 def main():
-    test_index = "species"
+    test_index = "genes"
     test_term = "Catt"
 
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
 
     print("Hello")
-    add_to_index(test_index, test_term)
+    # add_to_index(test_index, test_term)
 
-    reset_index(test_index)
+    # reset_index(test_index)
     # delete_from_index(test_index, test_term)
 
-    # refresh(test_index)
+    refresh(test_index)
 
 
 
