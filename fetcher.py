@@ -95,10 +95,10 @@ def main():
     test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
     output_folder = "./storage/"
 
-    delete_folder_contents(output_folder)
+    # delete_folder_contents(output_folder)
 
     # TODO - place this somewhere better
-    create_folders(test_genes, output_folder)
+    # create_folders(test_genes, output_folder)
 
     for i in range(len(test_genes)):
         print(battery(test_genes[i], output_folder))
