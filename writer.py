@@ -36,9 +36,7 @@ def write_to_gb(raw_data, output_folder):
             current_file.close()
 
             # Splits line and declares the file id based on desired folder and Locus ID
-            # split = line.split()
-            # print("THIS ONE: ", split)
-            gb_location = output_folder + "gb/" + ' '.join(line.split()[1:]) + ".gb"
+            gb_location = output_folder + "gb/" + '-'.join(line.split()[1:]) + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
@@ -72,7 +70,7 @@ def write_to_fasta(raw, output_location, chart):
         sequence = raw[j]["GBSeq_sequence"]
 
         # Variable for the to be named output location
-        out_loc = output_location + "full_fa/" + raw[j]["GBSeq_organism"] + ".fa"
+        out_loc = output_location + "full_fa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + ".fa"
 
         # For the DNA version
         if not os.path.isfile(out_loc):
@@ -81,7 +79,7 @@ def write_to_fasta(raw, output_location, chart):
         current_file = open(out_loc, "w")
 
         # For the amino acid version
-        out_loc_protein = output_location + "full_faa/" + raw[j]["GBSeq_organism"] + ".faa"
+        out_loc_protein = output_location + "full_faa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + ".faa"
         if not os.path.isfile(out_loc_protein):
             current_file_protein = open(out_loc_protein, "x")
             amino_downloaded.append(raw[j]["GBSeq_locus"])

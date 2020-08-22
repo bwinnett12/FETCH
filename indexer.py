@@ -1,6 +1,5 @@
 
 # Adds a term to index. Either to genes.lst or species.lst
-import os
 import glob
 
 
@@ -70,10 +69,8 @@ def reset_indexes():
             print(index)
             for file in glob.glob("./storage/fa/*.fa"):
                 fulllist.append(file.split("/")[-1].split("_")[0])
-                # print(file.split("/")[-1].split("_")[0])
             for file in glob.glob("./storage/faa/*.faa"):
                 fulllist.append(file.split("/")[-1].split("_")[0])
-                # print(file.split("/")[-1].split("_")[0])
 
 
         print(fulllist)
@@ -108,7 +105,6 @@ def reset_indexes():
 
 # Does normalization on lists
 # Sorts alphabetically,
-# TODO - set up refreshing of downloaded files
 def refresh(index):
 
     # Common recursive sort algorithm for sorting through each index
@@ -132,6 +128,19 @@ def refresh(index):
     for line in lines:
         file.write(line)
     file.close()
+
+
+def get_query_from_indexes():
+    query_to_fetch = [[], []]
+    indexes = ["species", "genes"]
+    for i in range(len(indexes)):
+        lines = open(open_clarify(indexes[i]))
+
+        for line in lines:
+            if ";" not in line:
+                query_to_fetch[i].append(line.split("\n")[0])
+
+    return query_to_fetch
 
 
 
@@ -160,8 +169,9 @@ def main():
     # reset_index(test_index)
     # delete_from_index(test_index, test_term)
 
-    refresh(test_index)
-    reset_indexes()
+    # refresh(test_index)
+    # reset_indexes()
+    get_query_from_indexes()
 
 
 
