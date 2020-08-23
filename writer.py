@@ -180,9 +180,6 @@ def write_to_fasta(raw, output_location, chart):
         current_file_protein.close()
         current_file.close()
 
-        add_to_index("species", raw[j]["GBSeq_organism"])
-
-
 
 
     return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
@@ -214,7 +211,7 @@ def write_translation_to_fasta(header, sequence, chart, out_file):
     return files_downloaded if files_downloaded != "" else ""
 
 
-
+# TODO - Fix translated version
 def write_fasta_to_individual(file, output_folder, option):
 
     for record in SeqIO.parse(file, "fasta"):
@@ -232,7 +229,7 @@ def write_fasta_to_individual(file, output_folder, option):
             current_file = open(location, "x")
         current_file = open(location, "w")
 
-        current_file.write(record.description + "\n")
+        current_file.write("> " + record.description + "\n")
 
         # Loops through to 75 nucleotides per line
         for n in range(0, len(record.seq), 75):
