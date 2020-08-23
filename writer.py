@@ -3,70 +3,51 @@ __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
 import os
-from Bio import SeqIO
+from Bio import SeqIO, Seq
+from Bio.Data.CodonTable import TranslationError
+
 from indexer import *
 
 # TODO - This one works but is inefficient
 def write_to_gb(raw_data, output_folder):
 
+    # if empty then there's nothing to do
     if raw_data == "":
         return "No files downloaded. Search query had no results"
 
     files_downloaded = []
-    # Creates a temp file and saves the parsed (ncbi) data to. If no temp file, creates one
-    # I know this is extra work, but I'm just not sure how to do it cleaner
-    try:
-        temp_file = open("./temp.txt", "x")
-    except FileExistsError:
-        pass
 
-    temp_file = open("./temp.txt", "w")
-    temp_file.write(raw_data)
-
-    # parses data from text and saves it as a line
-    with open('./temp.txt', 'r') as raw_text:
-        lines = raw_text.readlines()
-
-    # Declares a variable to write to. This will be changed to Locus ID after first iteration
-    current_file = temp_file
+    # Creates a variable to store all the genbank file
+    lines = raw_data.split("\n")
 
     for line in lines:
-        # By default, genebank files have "LOCUS ID". Gets the ID and creates a file for it. Sets writing location
+        # By default, genbank files have "ORGANISM ID". Gets the ID and creates a file for it. Sets writing location
         if 'ORGANISM' in line:
-            current_file.close()
 
-            # Splits line and declares the file id based on desired folder and Locus ID
+            # Splits line and declares the file id based on desired folder and organism
             gb_location = output_folder + "gb/" + '-'.join(line.split()[1:]) + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
                 current_file = open(gb_location, "x")
-                # files_downloaded.append(split[1])
 
             current_file = open(gb_location, "w")
 
-        current_file.write(line)
-
-    # Removes temp file
-    try:
-        temp_file.close()
-        os.remove("./temp.txt")
-    except FileNotFoundError as e:
-        pass
+            # Writes the entire genbank to file
+            current_file.write(raw_data)
 
     return str(len(files_downloaded)) + " files downloaded. Names are: " + str(files_downloaded)
 
 
 # Creates a fasta for each file
 # Also uses information from this which is then sent into a translated .faa file
-def write_to_fasta(raw, output_location, chart):
+def write_to_fasta(raw, output_location):
     files_downloaded = amino_downloaded = []
 
     # Loops through each locus fetched
     for j in range(0, len(raw)):
 
         # Saves the sequence to avoid calling it repeatedly
-        # TODO - Change name from full_fa
         sequence = raw[j]["GBSeq_sequence"]
 
         # Variable for the to be named output location
@@ -110,7 +91,7 @@ def write_to_fasta(raw, output_location, chart):
                         if qual['GBQualifier_name'] == 'note':
                             product_name = qual['GBQualifier_value']
 
-
+                    # Creates a header based on what we have
                     header = " ".join([">", locus, gene_name,
                                        "-", product_name,
                                        raw[j]["GBSeq_organism"]])
@@ -119,15 +100,12 @@ def write_to_fasta(raw, output_location, chart):
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
-                    print("Header - Key Error")
-                    # print(feature)
+                    # print("Header - Key Error")
                     continue
 
                 # For the genes that aren't setup the same as the others
                 except IndexError:
-                    print("Header - Index Error")
-
-                    # print(feature)
+                    # print("Header - Index Error")
                     continue
 
                 try:
@@ -145,11 +123,8 @@ def write_to_fasta(raw, output_location, chart):
 
                 # This is an exception for in case the entry is a feature or similar with only one location index
                 except KeyError:
-                    print("Sequence - KeyError")
+                    # print("Sequence - KeyError")
                     sequence_gene = feature['GBFeature_intervals'][0]['GBInterval_point']
-
-
-
 
 
 
@@ -167,20 +142,15 @@ def write_to_fasta(raw, output_location, chart):
                 # Spacer
                 current_file.write(" " + "\n")
 
-                # TODO - Fix this
-                print(out_loc)
+                # TODO - have a better return policy
                 write_fasta_to_individual(out_loc, output_location, "fa")
                 write_fasta_to_individual(out_loc_protein, output_location, "faa")
 
                 amino_downloaded.append(write_translation_to_fasta(
-                    header, sequence_gene, chart, current_file_protein))
-
-        # files_made += raw[j]["GBSeq_locus"] + ", "
+                    header, sequence_gene, current_file_protein))
 
         current_file_protein.close()
         current_file.close()
-
-
 
     return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
         str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
@@ -189,17 +159,14 @@ def write_to_fasta(raw, output_location, chart):
 
 # Makes a .fasta that includes a protein copy with it
 # Piggy tails off the DNA to fasta version (The only difference is the translated sequence)
-def write_translation_to_fasta(header, sequence, chart, out_file):
+def write_translation_to_fasta(header, sequence, out_file):
     translated_protein = ""
     files_downloaded = ""
 
-    for i in range(0, len(sequence) if len(sequence) % 3 == 0 else len(sequence) - (len(sequence) % 3), 3):
-        try:
-            translated_protein += chart[sequence[i:i+3]]
-
-        except KeyError:
-            print(header)
-
+    try:
+        translated_protein = Seq.translate(sequence, table=4)
+    except TranslationError:
+        print("Failed")
 
     out_file.write(header + "\n")
 
@@ -211,29 +178,39 @@ def write_translation_to_fasta(header, sequence, chart, out_file):
     return files_downloaded if files_downloaded != "" else ""
 
 
-# TODO - Fix translated version
+# Takes a fasta and breaks every gene into its own file
+# Can be used for .fa or .faa
+# TODO - update chart selector
 def write_fasta_to_individual(file, output_folder, option):
 
     for record in SeqIO.parse(file, "fasta"):
-        if record.description.split()[1] == '-':
+        # IF record is empty or gene name is missing, skips it
+        if record.description.split()[1] == '-' or record.seq == '':
             continue
 
-        print(record.description.split())
+        # Options based on if the option is fasta or if it needs to be translated
         if option == "fa":
             location = output_folder + "fa/" + record.description.split()[1] + "_" + file.split("/")[-1]
         elif option == "faa":
             location = output_folder + "faa/" + record.description.split()[1] + "_" + file.split("/")[-1]
 
-
+        # Creates a file if not there else uses file
         if not os.path.isfile(location):
             current_file = open(location, "x")
         current_file = open(location, "w")
 
+        # Writes the header first
         current_file.write("> " + record.description + "\n")
 
+        # if .faa, translates sequence. Else keeps previous
+        try:
+            sequence = Seq.translate(record.seq, table=4) if option == "faa" else record.seq
+        except TranslationError:
+            sequence = record.seq
+
         # Loops through to 75 nucleotides per line
-        for n in range(0, len(record.seq), 75):
-            current_file.write(str(record.seq[n:n + 75]) + "\n")
+        for n in range(0, len(sequence), 75):
+            current_file.write(str(sequence[n:n + 75]) + "\n")
 
         # Spacer
         current_file.write(" " + "\n")
