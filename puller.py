@@ -3,16 +3,18 @@ import os
 from Bio import SeqIO
 from indexer import get_query_from_indexes
 from shutil import copy
-
 import glob
 
+# Pulls all of the fastas from the query into a folder
 def move_individual_fasta_to(out_loc):
     query = get_query_from_indexes()
 
-    # Species
+    # Species is 0
+    # the next 5 for loops are nearly identical except first three is species
     for species in query[0]:
-        print(species)
+        # gets all of the file addresses that are in the folder
         for pos in glob.glob("./storage/fa/*.fa"):
+            # if the gene is in the title (Standard packing), then moves file
             if pos.split("_")[-1].split(".")[0] == species.replace(" ", "-"):
                 copy(pos, out_loc)
 
@@ -21,46 +23,46 @@ def move_individual_fasta_to(out_loc):
                 copy(pos, out_loc)
 
         for pos in glob.glob("./storage/gb/*.gb"):
-            print(pos.split("/")[-1].split(".")[0] == species.replace(" ", "-"))
             if pos.split("/")[-1].split(".")[0] == species.replace(" ", "-"):
                 copy(pos, out_loc)
 
 
-    # Gene
+    # Gene is 1
     for gene in query[1]:
         for pos in glob.glob("./storage/fa/*.fa"):
-            # print(pos.split("_")[0].split("/")[-1], gene)
             if pos.split("_")[0].split("/")[-1] == gene:
                 copy(pos, out_loc)
 
         for pos in glob.glob("./storage/faa/*.faa"):
-            # print(pos.split("_")[0].split("/")[-1], gene)
             if pos.split("_")[0].split("/")[-1] == gene:
                 copy(pos, out_loc)
 
 
 
+# Pulls all of the instances of the desired gene into a single fasta
 def pull_query_to_fasta(out_loc):
     query = get_query_from_indexes()
 
     for gene in query[1]:
-
+        # names output folder to gene.fa
         out_loc_file = out_loc + gene + ".fa"
 
+        # Makes said file
         if not os.path.isfile(out_loc_file):
             current_file = open(out_loc_file, "x")
         current_file = open(out_loc_file, "w")
 
         files_array = []
 
+        # Searches for all files with the name as the gene
         for pos in glob.glob("./storage/fa/*.fa"):
             if pos.split("_")[0].split("/")[-1] == gene:
+                # Adds names to a list
                 files_array.append(pos)
 
 
         for file in files_array:
-
-            # TODO - Fix this so it reads the files
+            # writes the fasta into the file
             for record in SeqIO.parse(file, "fasta"):
                 current_file.write(">" + record.description + " " + str(len(record.seq)) + "\n")
 
@@ -69,8 +71,6 @@ def pull_query_to_fasta(out_loc):
                 current_file.write("\n")
 
         current_file.close()
-        # print(files_array)
-
 
 
 def main():
