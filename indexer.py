@@ -1,8 +1,7 @@
 
-# Adds a term to index. Either to genes.lst or species.lst
 import glob
 
-
+# Adds a term to index. Either to genes.lst or species.lst
 def add_to_index(index, term):
 
     file = open(open_clarify(index), "a+")
@@ -12,10 +11,9 @@ def add_to_index(index, term):
         file.write(";" + term + "\n")
     file.close()
 
-    # refresh(index)
-
 
 # Deletes a term from the index. Either to genes.lst or species.lst
+# Deleting entries is harder than adding, files needs to be re-written for each entry
 def delete_from_index(index, term):
     # Stores all of the data in "lines"
     file = open(open_clarify(index), "r+")
@@ -66,23 +64,25 @@ def reset_indexes():
                 fulllist.append(file.split("/")[-1].split(".")[0])
 
         if index == "genes":
-            print(index)
             for file in glob.glob("./storage/fa/*.fa"):
                 fulllist.append(file.split("/")[-1].split("_")[0])
             for file in glob.glob("./storage/faa/*.faa"):
                 fulllist.append(file.split("/")[-1].split("_")[0])
 
 
-        print(fulllist)
         return list(set(fulllist))
 
+    # Ran once for each index
     for index in ["species", "genes"]:
 
+        # Gets an accurate list of what is in the local files (Currently ./storage/
         full_list = get_file_list(index)
 
+        # Saves full_list to replace index
         for entry in full_list:
             add_to_index(index, entry)
 
+        # Saves lines of index to be then added back in with a
         file = open(open_clarify(index), "r+")
         lines = file.readlines()
         file.close()
@@ -90,6 +90,7 @@ def reset_indexes():
         file = open(open_clarify(index), "w")
 
         # Adds a semicolon if there isn't a semicolon
+        # TODO - Make this optional. Might stink to do after specifying many genes
         for line in lines:
             if line[0] == ";":
                 file.write(line)
@@ -130,12 +131,16 @@ def refresh(index):
     file.close()
 
 
+# Finds which genes are unmarked to pull from the local files
 def get_query_from_indexes():
+    # [[species], [genes]]
     query_to_fetch = [[], []]
     indexes = ["species", "genes"]
+
     for i in range(len(indexes)):
         lines = open(open_clarify(indexes[i]))
 
+        # Picks up all the unmarked ones and adds to a list
         for line in lines:
             if ";" not in line:
                 query_to_fetch[i].append(line.split("\n")[0])
@@ -163,7 +168,7 @@ def main():
     test_array = [3,4,5,1,7,2,8,20]
     test_array_long = ["Bob", "chad", "Kyle", "Tom", "Fred", "d qs", "dqwd ", "!", "d w ", "gr we"," feqw", " few"]
 
-    print("Hello")
+    print("Hello from indexer")
     # add_to_index(test_index, test_term)
 
     # reset_index(test_index)
@@ -171,8 +176,6 @@ def main():
 
     # refresh(test_index)
     # reset_indexes()
-    get_query_from_indexes()
-
 
 
 
