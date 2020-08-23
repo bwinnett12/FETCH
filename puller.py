@@ -1,7 +1,7 @@
 import os
 
 from Bio import SeqIO
-from indexer import *
+from indexer import get_query_from_indexes
 from shutil import copy
 
 import glob
@@ -57,15 +57,18 @@ def pull_query_to_fasta(out_loc):
             if pos.split("_")[0].split("/")[-1] == gene:
                 files_array.append(pos)
 
-        print(files_array)
 
         for file in files_array:
-            print(file)
 
             # TODO - Fix this so it reads the files
             for record in SeqIO.parse(file, "fasta"):
-                print(record)
-                print(record.description)
+                current_file.write(">" + record.description + " " + str(len(record.seq)) + "\n")
+
+                for n in range(0, len(record.seq), 75):
+                    current_file.write(str(record.seq[n:n + 75]) + "\n")
+                current_file.write("\n")
+
+        current_file.close()
         # print(files_array)
 
 
