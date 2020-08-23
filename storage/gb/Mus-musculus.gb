@@ -1,3 +1,10 @@
+LOCUS       NC_005089              16299 bp    DNA     circular ROD 27-APR-2017
+DEFINITION  Mus musculus mitochondrion, complete genome.
+ACCESSION   NC_005089
+VERSION     NC_005089.1
+DBLINK      BioProject: PRJNA169
+KEYWORDS    RefSeq.
+SOURCE      mitochondrion Mus musculus (house mouse)
   ORGANISM  Mus musculus
             Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
             Mammalia; Eutheria; Euarchontoglires; Glires; Rodentia; Myomorpha;

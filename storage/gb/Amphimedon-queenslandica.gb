@@ -1,3 +1,11 @@
+LOCUS       NC_008944              19960 bp    DNA     circular INV 23-FEB-2007
+DEFINITION  Amphimedon queenslandica mitochondrion, complete genome.
+ACCESSION   NC_008944
+VERSION     NC_008944.1
+DBLINK      Project: 18781
+            BioProject: PRJNA18781
+KEYWORDS    RefSeq.
+SOURCE      mitochondrion Amphimedon queenslandica (desmosponge)
   ORGANISM  Amphimedon queenslandica
             Eukaryota; Metazoa; Porifera; Demospongiae; Heteroscleromorpha;
             Haplosclerida; Niphatidae; Amphimedon.

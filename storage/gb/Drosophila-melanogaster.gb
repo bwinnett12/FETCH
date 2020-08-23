@@ -1,3 +1,11 @@
+LOCUS       NC_024511              19524 bp    DNA     circular INV 01-JUN-2018
+DEFINITION  Drosophila melanogaster mitochondrion, complete genome.
+ACCESSION   NC_024511
+VERSION     NC_024511.2
+DBLINK      BioProject: PRJNA164
+            BioSample: SAMN02803731
+KEYWORDS    RefSeq.
+SOURCE      mitochondrion Drosophila melanogaster (fruit fly)
   ORGANISM  Drosophila melanogaster
             Eukaryota; Metazoa; Ecdysozoa; Arthropoda; Hexapoda; Insecta;
             Pterygota; Neoptera; Holometabola; Diptera; Brachycera;

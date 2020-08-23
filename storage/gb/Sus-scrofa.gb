@@ -1,3 +1,10 @@
+LOCUS       NC_000845              16613 bp    DNA     circular MAM 24-OCT-2013
+DEFINITION  Sus scrofa mitochondrion, complete genome.
+ACCESSION   NC_000845
+VERSION     NC_000845.1
+DBLINK      BioProject: PRJNA28993
+KEYWORDS    RefSeq.
+SOURCE      mitochondrion Sus scrofa (pig)
   ORGANISM  Sus scrofa
             Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
             Mammalia; Eutheria; Laurasiatheria; Cetartiodactyla; Suina; Suidae;
