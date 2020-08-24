@@ -8,7 +8,6 @@ from Bio.Data.CodonTable import TranslationError
 
 from indexer import *
 
-# TODO - This one works but is inefficient
 def write_to_gb(raw_data, output_folder):
 
     # if empty then there's nothing to do
@@ -35,8 +34,44 @@ def write_to_gb(raw_data, output_folder):
 
             # Writes the entire genbank to file
             current_file.write(raw_data)
+            current_file.close()
+
+            # Piggy backs genome writing to here
+            write_genome(gb_location, output_folder)
 
     return str(len(files_downloaded)) + " files downloaded. Names are: " + str(files_downloaded)
+
+
+# Writes the whole genome to a fasta in the genome folder of local storage
+def write_genome(file, output_folder):
+
+    # From here to the next section is just to get the file name of the organism
+    lines = open(file, "r").readlines()
+    out_loc = ""
+
+    for line in lines:
+        # Only looks for the name of the organism
+        if 'ORGANISM' in line:
+
+            # Splits line and declares the file id based on desired folder and organism
+            out_loc = output_folder + "genome/" + '-'.join(line.split()[1:]) + ".fa"
+
+            # If there is no file, creates one and then adds the name for log outputting
+            if not os.path.isfile(out_loc):
+                current_file = open(out_loc, "x")
+            # No need to keep iterating so break from loop
+            break
+
+    with open(file, "r") as input_handle:
+
+        with open(out_loc, "w") as output_handle:
+            sequences = SeqIO.parse(input_handle, "genbank")
+            count = SeqIO.write(sequences, output_handle, "fasta")
+
+
+
+    print("Converted %i records" % count)
+
 
 
 # Creates a fasta for each file
@@ -214,6 +249,9 @@ def write_fasta_to_individual(file, output_folder, option):
 
         # Spacer
         current_file.write(" " + "\n")
+
+
+
 
 
 
