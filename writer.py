@@ -166,7 +166,7 @@ def write_translation_to_fasta(header, sequence, out_file):
     try:
         translated_protein = Seq.translate(sequence, table=4)
     except TranslationError:
-        print("Failed")
+        r = 2
 
     out_file.write(header + "\n")
 

@@ -1,9 +1,12 @@
+import glob
 import os
+from shutil import copy
 
 from Bio import SeqIO
+from Bio.Align.Applications import MafftCommandline
+
 from indexer import get_query_from_indexes
-from shutil import copy
-import glob
+
 
 # Pulls all of the fastas from the query into a folder
 def move_individual_fasta_to(out_loc):
@@ -71,6 +74,33 @@ def pull_query_to_fasta(out_loc):
                 current_file.write("\n")
 
         current_file.close()
+        align_fasta(out_loc_file)
+
+
+# When called, makes an aligned version of the fasta just pulled
+# TODO - Mafft requires an exe location unless on UNIX. Implement cross platform support
+def align_fasta(in_file_loc):
+
+    # Gets the base file *.fa
+    out_file_base = in_file_loc.split(".fa")[0] + ".aln"
+
+    # Runs command line to work with mafft
+    mafft_cline = MafftCommandline(input=in_file_loc)
+
+    # runs mafft using what our file was and to an output of base.aln
+    stdout, stderr = mafft_cline()
+    with open(out_file_base, "w") as handle:
+        handle.write(stdout)
+
+
+
+# I like having a sandbox
+def sando():
+    r = 2
+    pulled_from_fasta_seq = []
+    pulled_from_fasta_id = []
+
+
 
 
 def main():
@@ -78,6 +108,7 @@ def main():
     # move_sequences_to(test_out_loc)
     pull_query_to_fasta(test_out_loc)
     r = 2
+    # sando()
 
 
 

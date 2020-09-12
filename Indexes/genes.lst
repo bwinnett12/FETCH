@@ -1,8 +1,9 @@
-;ATP8
+ATP6
+ATP8
 ;COX1
 ;COX2
 ;COX3
-;CYTB
+CYTB
 ;ND1
 ;ND2
 ;ND3
@@ -21,7 +22,7 @@
 ;TrnK
 ;TrnL1
 ;TrnL2
-;TrnM
+TrnM
 ;TrnN
 ;TrnP
 ;TrnQ
@@ -58,5 +59,3 @@
 ;trnV
 ;trnW
 ;trnY
-;trnYATP6
-ATP6

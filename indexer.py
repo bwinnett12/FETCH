@@ -175,9 +175,7 @@ def main():
     # delete_from_index(test_index, test_term)
 
     # refresh(test_index)
-    # reset_indexes()
-
-
+    reset_indexes()
 
 
 
@@ -185,42 +183,6 @@ def main():
 
 def sandbox():
     r = 2
-    # mydb = mysql.connector.connect(
-    #     host="localhost",
-    #     user="root",
-    #     password="",
-    #     database="testdb"
-    # )
-    #
-    # mycursor = mydb.cursor()
-
-    # mycursor.execute("CREATE TABLE students (name VARCHAR(255), age INTEGER(10))")
-    # mycursor.execute()
-
-    # for db in mycursor:
-    #     print(db)
-
-    # for tb in mycursor:
-    #     print(tb)
-    #
-    # sqlFormula = "INSERT INTO students (name, age) VALUES (%s, %s)"
-    #
-    # students = [("Rachel", 22), ("Bob", 21), ("Jacob", 23), ("Ryan", 26), ("Rachel", 12)]
-    # student1 = ("Rachel", 22)
-    # student2 = ("James", 21)
-    #
-    # mycursor.executemany(sqlFormula, students)
-    #
-    # for tb in mycursor:
-    #     print(tb)
-
-    # mycursor.execute("SELECT * FROM students")
-    # myresult = mycursor.fetchall()
-    #
-    # for row in myresult:
-    #     print(row)
-
-    # mydb.commit()
 
 
 
