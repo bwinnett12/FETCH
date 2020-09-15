@@ -40,7 +40,7 @@ def parse_ncbi(query_from_user, output_type):
 def battery(search_query, output_folder):
 
     return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta"), output_folder)
-    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
+    # return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
 
     reset_indexes()
 
@@ -49,8 +49,13 @@ def battery(search_query, output_folder):
 
 def main():
 
-    test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
+    # test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
     output_folder = "./storage/"
+    test_genes = ['NC_015654.1']
+    test_genes = ['txid36190[Organism] mitochondria']
+    test_genes = ['Human AND Mouse']
+    test_genes = ['NC_015654', 'NC_0467762', 'NC_039543']
+
 
 
     for i in range(len(test_genes)):

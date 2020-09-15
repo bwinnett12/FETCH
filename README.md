@@ -1,41 +1,60 @@
 # ncbifetcher
 
+#### Hello there
+This program is designed to be a user friendly storage space for mitochondrial genomes, elements, genes, and protein outputs. The program has integration for ncbi through biopython while also the user has an option to import their own sequences, genomes, etc to all be integrated. The program also has keeps records of what is stored in storage. With these records, another module can pull what is specified from these records (indexes) and consolidate them into a fasta file. Mafft is supported so the outputed files can then be aligned as another output.
+
+If there are any questions, concerns, or nice stories; please don't hesitate to contact at wwinnett@iastate.edu.
+
+This project was made in conjunction with Lavrov lab and under the supervision of Dr. Muthye and Dr. Lavrov.
+
 ### Instructions:
-1) Update the setwd() to your location of the repository install. It should be listed as fetcher.py
-2) Run the app.R or load each piece individually
-3) In the blank write in the classifiers for gene bank files to install. Ex. NC_012920.1 downloads that file.
+There are a couple of things that you can do with this project:
+1) Download genbank (.gb), genomes(.fa), and genes (.fa) to the base storage file (default is in project directory). You can do this by running from **fetcher.py**:
 
-
-### Troubleshooting
-If the R packages are missing, they may need to be downloaded. Copy this command into the R terminal:
 ```
-install.packages("shiny")
+battery(query, output location)
 ```
 
-If the Python package for bio is missing, run this command in terminal:
+Query can be treated as if you were searching ncbi by itself. So things like accession numbers, taxonomy (such as txid2754381[Organism]), or boolean operators (mouse AND mitochondria). Running this also updates the indexes (gene.lst and species.lst).
+
+2) The genes can be pulled from storage and consolidated into a new fasta file containing all of the genes from a species and from a gene. To specify which genes and/or species, uncomment the genes or species you want from the index. 
+
 ```
-python -m pip install bio Bio biopython
+Selected: ATP6,
+Unselected or commented out: ;ATP6.
 ```
 
+By default, the comment is a semi-colon. The indexes location is also under the indexes folder in the project directory. The outputs are fastas and the clustal aligned files. 
 
-It may need to be ran as root. If you aren't able to use a terminal or if the terminal doesn't work as efficiently as
-it could be, there are alternatives. If using an IDE (such as PyCharm), hover over the package itself and there should
-be a download this package button.
+To run this feature, run the **puller.py**
 
-## Roadmap
+### Road map 
 - Parse the gene bank and download raw data
 - Save the raw data to a .gb file
 - Create a fasta out of the individual pieces to it (as .fa)
 - Create an amino acid version of the fasta (as .faa)
+- Create a fasta out of the whole genome (full\_fa/*.fa)
+- Create an amino acid fasta out of the whole genome (full_faa/*.faa)
 - Create a battery that does all three processes
 
-- Create a database that stores each gene parsed into a database
+##### Indexer
+- Save the storage as an smooth and easy way to work with the saved files
+- Automate refreshing and resetting of indexes
+
+##### Puller
+- Neatly pull out desired information as directed by the indexes. Save them as a fasta
+- Align the fasta and save as a clustal aligned file (.aln)
 
 #### TODO
-- [x] Write a script that parses the ncbi
-- [x] Clean up Python
-- [x] Add optional folder location specifier
-- [x] Factor the misc features and notes into the fasta somehow
-- [x] Get an amino acid version of the other fasta
-- [ ] Create a database to store all of the sequences and genes
-- [ ] Configure it to work on the LavrovLab server or some form of university funded hosting
+- [ ] Allow for the storage and output to have easy integration
+- [ ] Allow the program to be called from the command line
+- [ ] Implement an algorithm for output of puller
+- [ ] Allow translation to be specified by the genbank file rather than default
+- [ ] Allow the user to specify an optional parameters to the argument.
+
+###### Late game TODO 
+- [ ] Integrate R shiny
+- [ ] Provide windows support for mafft
+
+#### Known issues
+- [ ] Translating of sequence is not being called.

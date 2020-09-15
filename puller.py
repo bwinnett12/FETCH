@@ -78,6 +78,33 @@ def pull_query_to_fasta(out_loc):
         current_file.close()
         align_fasta(out_loc_file)
 
+    for species in query[0]:
+        out_loc_file = out_loc + species + ".fa"
+
+        # Makes said file
+        if not os.path.isfile(out_loc_file):
+            current_file = open(out_loc_file, "x")
+        current_file = open(out_loc_file, "w")
+
+        files_array = []
+
+        for pos in glob.glob("./storage/fa/*.fa"):
+            if pos.split("_")[1].strip(".fa") == species:
+                # Adds names to a list
+                files_array.append(pos)
+
+        for file in files_array:
+            # writes the fasta into the file
+            for record in SeqIO.parse(file, "fasta"):
+                current_file.write(">" + record.description + " " + str(len(record.seq)) + "\n")
+
+                for n in range(0, len(record.seq), 75):
+                    current_file.write(str(record.seq[n:n + 75]) + "\n")
+                current_file.write("\n")
+
+        current_file.close()
+        align_fasta(out_loc_file)
+
 
 # When called, makes an aligned version of the fasta just pulled
 # TODO - Mafft requires an exe location unless on UNIX. Implement cross platform support
@@ -106,7 +133,7 @@ def sando():
 
 
 def main():
-    test_out_loc = "./output/"
+    test_out_loc = "/home/bill/Research/genetic_material/cold/"
     # move_sequences_to(test_out_loc)
     pull_query_to_fasta(test_out_loc)
     r = 2

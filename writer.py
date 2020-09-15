@@ -126,7 +126,7 @@ def write_to_fasta(raw, output_location):
                             product_name = qual['GBQualifier_value']
 
                     # Creates a header based on what we have
-                    header = " ".join([">", locus, gene_name,
+                    header = ">" + " ".join([locus, gene_name,
                                        "-", product_name,
                                        raw[j]["GBSeq_organism"]])
 
