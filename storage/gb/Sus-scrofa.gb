@@ -7,7 +7,7 @@ KEYWORDS    RefSeq.
 SOURCE      mitochondrion Sus scrofa (pig)
   ORGANISM  Sus scrofa
             Eukaryota; Metazoa; Chordata; Craniata; Vertebrata; Euteleostomi;
-            Mammalia; Eutheria; Laurasiatheria; Cetartiodactyla; Suina; Suidae;
+            Mammalia; Eutheria; Laurasiatheria; Artiodactyla; Suina; Suidae;
             Sus.
 REFERENCE   1  (bases 1 to 16613)
   AUTHORS   Lin,C.S., Sun,Y.L., Liu,C.Y., Yang,P.C., Chang,L.C., Cheng,I.C.,

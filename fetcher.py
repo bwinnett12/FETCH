@@ -2,13 +2,14 @@
 __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
-import os
 from Bio import Entrez
 from writer import write_to_gb, write_to_fasta
-from indexer import refresh
+from indexer import reset_indexes
 
 
-def parse_ncbi(query_from_user, output_type, out_loc):
+# TODO - Have the user to input their email
+# Parses the genebank and fetches what the user inputs
+def parse_ncbi(query_from_user, output_type):
 
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
     Entrez.email = "wwinnett@iastate.edu"
@@ -23,7 +24,6 @@ def parse_ncbi(query_from_user, output_type, out_loc):
     retmode_input = ("text", "xml")[output_type == "fasta"]
 
     # Fetches those matching IDs from esearch
-    # rettype gb = genebank(text as retmode), fasta = fasta (use xml as retmode)
     handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode=retmode_input)
 
     # for xml... if using .txt it should be handle.read()
@@ -35,35 +35,14 @@ def parse_ncbi(query_from_user, output_type, out_loc):
     return raw_data
 
 
-# Creates folders for each of the accession numbers
-def create_folders(id_list, out_folder):
-    for entry in range(len(id_list)):
-        if not os.path.isdir(out_folder + id_list[entry]):
-            os.makedirs(out_folder + id_list[entry])
-
-
-# Allows the user to delete all files from the folder
-# Mostly for testing purposes
-def delete_folder_contents(folder_loc):
-    num_deleted = 0
-    for filename in os.listdir(folder_loc):
-        if filename.endswith(".gb") or filename.endswith(".fa") or filename.endswith(".faa") or os.path.isdir(filename):
-            num_deleted += 1
-            # os.unlink(file.path)
-
-    return "Files Deleted: %d" % num_deleted
-
-
 # Something to run to run both functions. Ultimately will be done using R (Front End)
+# TODO - make this neater
 def battery(search_query, output_folder):
 
+    return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta"), output_folder)
+    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
 
-    return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta", output_folder), output_folder)
-    return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text", output_folder), output_folder)
-
-    lst = ["species", "genes"]
-    for entry in lst:
-        refresh(entry)
+    reset_indexes()
 
     return return_to_r
 
@@ -73,13 +52,11 @@ def main():
     test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
     output_folder = "./storage/"
 
-    # delete_folder_contents(output_folder)
-
-    # TODO - place this somewhere better
-    # create_folders(test_genes, output_folder)
 
     for i in range(len(test_genes)):
         print(battery(test_genes[i], output_folder))
+
+    # battery(test_genes, output_folder)
 
 
 

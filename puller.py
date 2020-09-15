@@ -21,10 +21,12 @@ def move_individual_fasta_to(out_loc):
             if pos.split("_")[-1].split(".")[0] == species.replace(" ", "-"):
                 copy(pos, out_loc)
 
+        # Repeats for all of the amino fastas
         for pos in glob.glob("./storage/faa/*.faa"):
             if pos.split("_")[-1].split(".")[0] == species.replace(" ", "-"):
                 copy(pos, out_loc)
 
+        # Repeats for genbank files
         for pos in glob.glob("./storage/gb/*.gb"):
             if pos.split("/")[-1].split(".")[0] == species.replace(" ", "-"):
                 copy(pos, out_loc)

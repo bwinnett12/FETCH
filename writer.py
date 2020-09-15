@@ -5,7 +5,6 @@ __email__ = "bwinnett12@gmail.com"
 import os
 from Bio import SeqIO, Seq
 from Bio.Data.CodonTable import TranslationError
-
 from indexer import *
 
 def write_to_gb(raw_data, output_folder):
