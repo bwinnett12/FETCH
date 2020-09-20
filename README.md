@@ -57,4 +57,4 @@ To run this feature, run the **puller.py**
 - [ ] Provide windows support for mafft
 
 #### Known issues
-- [ ] Translating of sequence is not being called.
+- [x] Translating of sequence is not being called.

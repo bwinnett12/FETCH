@@ -7,6 +7,38 @@ from Bio import SeqIO, Seq
 from Bio.Data.CodonTable import TranslationError
 from indexer import *
 
+# TODO - This a list of things to fix for this file
+# Add genome to battery
+# Get translation table
+
+
+
+# This is a way to consolidate all of the processes that write files
+def battery_writer(format_type, raw_data, output_folder):
+
+    if format_type == "text":
+        write_to_gb(raw_data, output_folder)
+
+    elif format_type == "xml":
+        files_created = write_to_fasta(raw_data, output_folder)
+
+        # Where the base file is located here. To be changed
+        fa_location = "full_fa/"
+
+        for file in files_created:
+            # Writes full fasta to translated full faa
+            write_translation_to_fasta(output_folder + fa_location + file, output_folder)
+
+            # Breaks full fa into individuals fas and faas
+            write_fasta_to_individual(output_folder + fa_location + file, output_folder, "fa")
+            write_fasta_to_individual(output_folder + fa_location + file, output_folder, "faa")
+
+    else:
+        print("Writing failed: Check format type. Was ", format_type)
+
+
+
+# Writes genbank files in the form of text to species.gb
 def write_to_gb(raw_data, output_folder):
 
     # if empty then there's nothing to do
@@ -69,14 +101,10 @@ def write_genome(file, output_folder):
 
 
 
-    print("Converted %i records" % count)
-
-
-
 # Creates a fasta for each file
 # Also uses information from this which is then sent into a translated .faa file
 def write_to_fasta(raw, output_location):
-    files_downloaded = amino_downloaded = []
+    files_downloaded = []
 
     # Loops through each locus fetched
     for j in range(0, len(raw)):
@@ -90,15 +118,11 @@ def write_to_fasta(raw, output_location):
         # For the DNA version
         if not os.path.isfile(out_loc):
             current_file = open(out_loc, "x")
-            files_downloaded.append(raw[j]["GBSeq_locus"])
+            # files_downloaded.append(raw[j]["GBSeq_locus"])
         current_file = open(out_loc, "w")
 
-        # For the amino acid version
-        out_loc_protein = output_location + "full_faa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + ".faa"
-        if not os.path.isfile(out_loc_protein):
-            current_file_protein = open(out_loc_protein, "x")
-            amino_downloaded.append(raw[j]["GBSeq_locus"])
-        current_file_protein = open(out_loc_protein, "w")
+
+        # Where the AMino acid version was
 
         # Loops through the features of each gene
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
@@ -176,40 +200,45 @@ def write_to_fasta(raw, output_location):
                 # Spacer
                 current_file.write(" " + "\n")
 
-                # TODO - have a better return policy
-                write_fasta_to_individual(out_loc, output_location, "fa")
-                write_fasta_to_individual(out_loc_protein, output_location, "faa")
+                if out_loc.split("/")[-1] not in files_downloaded:
+                    files_downloaded.append(out_loc.split("/")[-1])
 
-                amino_downloaded.append(write_translation_to_fasta(
-                    header, sequence_gene, current_file_protein))
-
-        current_file_protein.close()
+        # current_file_protein.close()
         current_file.close()
 
-    return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
-        str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
+    # return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
+    #     str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
+    return files_downloaded
 
 
 
 # Makes a .fasta that includes a protein copy with it
 # Piggy tails off the DNA to fasta version (The only difference is the translated sequence)
-def write_translation_to_fasta(header, sequence, out_file):
-    translated_protein = ""
-    files_downloaded = ""
+def write_translation_to_fasta(file, out_location):
 
-    try:
-        translated_protein = Seq.translate(sequence, table=4)
-    except TranslationError:
-        r = 2
+    # For the amino acid version
+    out_loc = out_location + "full_faa/" + file.split("/")[-1].strip(".fa") + ".faa"
+    if not os.path.isfile(out_loc):
+        current_file_protein = open(out_loc, "x")
+    current_file_protein = open(out_loc, "w")
 
-    out_file.write(header + "\n")
 
-    for n in range(0, len(translated_protein), 75):
-        out_file.write(translated_protein[n:n + 75] + "\n")
+    for record in SeqIO.parse(file, "fasta"):
+        try:
+            sequence = Seq.translate(record.seq, table=4)
+        except TranslationError:
+            print(TranslationError)
+            continue
 
-    out_file.write(" " + "\n")
+        current_file_protein.write(record.description + "\n")
 
-    return files_downloaded if files_downloaded != "" else ""
+
+        for n in range(0, len(sequence), 75):
+            current_file_protein.write(str(sequence[n:n + 75]) + "\n")
+
+        current_file_protein.write(" " + "\n")
+
+    return "Passed"
 
 
 # Takes a fasta and breaks every gene into its own file
@@ -219,19 +248,23 @@ def write_fasta_to_individual(file, output_folder, option):
 
     for record in SeqIO.parse(file, "fasta"):
         # IF record is empty or gene name is missing, skips it
-        if record.description.split()[1] == '-' or record.seq == '':
+        if record.description.split()[1] == '-' or record.description.split()[1] == ' ' or record.seq == '':
             continue
+
+        file_name = record.description.split()[1] + "_" + file.split("/")[-1].split(".")[0]
 
         # Options based on if the option is fasta or if it needs to be translated
         if option == "fa":
-            location = output_folder + "fa/" + record.description.split()[1] + "_" + file.split("/")[-1]
+            out_loc = output_folder + "fa/" + file_name + ".fa"
         elif option == "faa":
-            location = output_folder + "faa/" + record.description.split()[1] + "_" + file.split("/")[-1]
+            out_loc = output_folder + "faa/" + file_name + ".faa"
+        else:
+            return "Write to individual fasta failed: Option was ", option
 
         # Creates a file if not there else uses file
-        if not os.path.isfile(location):
-            current_file = open(location, "x")
-        current_file = open(location, "w")
+        if not os.path.isfile(out_loc):
+            current_file = open(out_loc, "x")
+        current_file = open(out_loc, "w")
 
         # Writes the header first
         current_file.write("> " + record.description + "\n")
@@ -248,7 +281,6 @@ def write_fasta_to_individual(file, output_folder, option):
 
         # Spacer
         current_file.write(" " + "\n")
-
 
 
 

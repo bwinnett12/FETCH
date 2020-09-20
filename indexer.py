@@ -81,15 +81,20 @@ def reset_indexes():
     # Ran once for each index
     for index in ["species", "genes"]:
 
+
+
         # Gets an accurate list of what is in the local files (Currently ./storage/)
         full_list = get_file_list(index)
+
+        file = open(open_clarify(index), "w")
+        file.close()
 
         # Saves full_list to replace index
         for entry in full_list:
             add_to_index(index, entry)
 
         # Saves lines of index to be then added back in later unchecked (with ;)
-        file = open(open_clarify(index), "r+")
+        file = open(open_clarify(index), "r")
         lines = file.readlines()
         file.close()
 
