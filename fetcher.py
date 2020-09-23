@@ -6,7 +6,7 @@ import glob
 import os
 
 from Bio import Entrez
-from writer import write_to_gb, write_to_fasta, battery_writer
+from writer import battery_writer
 from indexer import reset_indexes
 
 
@@ -41,11 +41,6 @@ def parse_ncbi(query_from_user, output_type):
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 # TODO - make this neater
 def battery(search_query, output_folder):
-    search_query = "X16885.1, X16888.1"
-    search_query = "NC_015654.1"
-
-    # return_to_r = write_to_fasta(parse_ncbi(search_query, "fasta"), output_folder)
-    # return_to_r += "\n" + write_to_gb(parse_ncbi(search_query, "text"), output_folder)
 
     xml_to_write = parse_ncbi(search_query, "fasta")
     text_to_write = parse_ncbi(search_query, "text")
@@ -54,8 +49,6 @@ def battery(search_query, output_folder):
     battery_writer("text", text_to_write, output_folder)
 
     reset_indexes()
-
-    # return return_to_r
 
 
 def delete_folder_contents():
@@ -68,21 +61,12 @@ def delete_folder_contents():
 def main():
     # delete_folder_contents()
 
-    # test_genes = ['NC_005089', 'NC_000845', 'NC_008944', 'NC_024511']
-    output_folder = "./storage/"
-    test_genes = ['NC_015654.1']
+    # Edit this one to change search query
     test_genes = ['txid36190[Organism] mitochondria']
-    test_genes = ['Human AND Mouse']
-    test_genes = ['NC_015654', 'NC_0467762', 'NC_039543']
 
-
-
-    # for i in range(len(test_genes)):
-    #     print(battery(test_genes[i], output_folder))
-
+    # Edit this one to change location of storage (default ./storage)
+    output_folder = "./storage/"
     battery(test_genes, output_folder)
-
-
 
 
 if __name__ == "__main__":

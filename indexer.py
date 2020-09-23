@@ -13,7 +13,7 @@ def add_to_index(index, term):
 
     # If term not there, appends to end
     if not check_index(index, term):
-        file.write(";" + term + "\n")
+        file.write(";" + term.lower() + "\n")
     file.close()
 
 
@@ -44,7 +44,8 @@ def check_index(index, term):
     file = open(open_clarify(index), "r")
 
     for line in file.readlines():
-        if line == (term + "\n") or line == (";" + term + "\n") or line == term or line == (";" + term):
+        # if line == (term + "\n") or line == (";" + term + "\n") or line == term or line == (";" + term):
+        if term.lower() in line:
             file.close()
             return True
     file.close()
@@ -59,7 +60,6 @@ def reset_indexes():
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
     def get_file_list(index):
 
-        lines = open(open_clarify(index), "r")
         path = "./storage/"
 
         fulllist = []
@@ -80,8 +80,6 @@ def reset_indexes():
 
     # Ran once for each index
     for index in ["species", "genes"]:
-
-
 
         # Gets an accurate list of what is in the local files (Currently ./storage/)
         full_list = get_file_list(index)
@@ -108,6 +106,7 @@ def reset_indexes():
             else:
                 file.write(";" + line)
         file.close()
+
         # Refreshes to organize and sort it again
         refresh(index)
 
@@ -132,14 +131,24 @@ def refresh(index):
 
     # Copies all of the info from the indexes first. then sorts the lines.
     file = open(open_clarify(index), "r+")
-    lines = quicksort(file.readlines())
+
+    appended = []
+    for line in file.readlines():
+        if ';' in line:
+            appended.append(line.split(";")[-1].split("\n")[0])
+
+    file.seek(0)
+
+    lines = quicksort([gene.strip(";") for gene in file.readlines()])
     file.close()
+
     # Reopens so it can paste back in
     file = open(open_clarify(index), "w")
 
     # Has to rewrite everything
     for line in lines:
-        file.write(line)
+        print(line.strip("\n"))
+        file.write(";" + str(line)) if line.strip("\n") in appended else file.write(line)
     file.close()
 
 
@@ -162,7 +171,6 @@ def get_query_from_indexes():
     return query_to_fetch
 
 
-
 # A helper method for simplifying all of the other methods
 def open_clarify(index):
     if index.lower() == "species":
@@ -173,13 +181,10 @@ def open_clarify(index):
         return False
 
 
-
-
 def main():
     print("Hello from indexer")
-    reset_indexes()
-
-
+    # reset_indexes()
+    # refresh("genes")
 
 
 if __name__ == '__main__':
