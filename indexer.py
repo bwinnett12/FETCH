@@ -1,14 +1,14 @@
-
 import glob
+
 """
 This module is a way to work with the indexes that are used for pulling and keeping track of the files
 Features: adding, deleting, resetting, and refreshing.
 Helpers: open_clarify(reduces 4 lines to 1), check_index(Looks through the index)
 """
 
+
 # Adds a term to index. Either to genes.lst or species.lst
 def add_to_index(index, term):
-
     file = open(open_clarify(index), "a+")
 
     # If term not there, appends to end
@@ -40,7 +40,6 @@ def delete_from_index(index, term):
 # Function that cycles through the .lst to see if the term is there
 # Helper just for saving time
 def check_index(index, term):
-
     file = open(open_clarify(index), "r")
 
     for line in file.readlines():
@@ -56,7 +55,6 @@ def check_index(index, term):
 # Also resets the indexes to what is found inside the storage folder
 # TODO - Stop hard-coding the path and Make reseting indexes optional
 def reset_indexes():
-
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
     def get_file_list(index):
 
@@ -111,14 +109,9 @@ def reset_indexes():
         refresh(index)
 
 
-
-
-
-
 # Does normalization on lists
 # Sorts alphabetically,
 def refresh(index):
-
     # Common recursive sort algorithm for sorting through each index. So widespread that it doesn't need comments
     def quicksort(R):
         if len(R) < 2:

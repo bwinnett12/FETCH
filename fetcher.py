@@ -12,10 +12,10 @@ from indexer import reset_indexes
 
 # TODO - Have the user to input their email
 # Parses the genebank and fetches what the user inputs
-def parse_ncbi(query_from_user, output_type):
+def parse_ncbi(query_from_user, output_type, email):
 
     # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
-    Entrez.email = "wwinnett@iastate.edu"
+    Entrez.email = email
 
     # searches for those who fit your request
     handle = Entrez.esearch(db="nucleotide", term=query_from_user)
@@ -40,10 +40,10 @@ def parse_ncbi(query_from_user, output_type):
 
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 # TODO - make this neater
-def battery(search_query, output_folder):
+def battery(search_query, output_folder, email):
 
-    xml_to_write = parse_ncbi(search_query, "fasta")
-    text_to_write = parse_ncbi(search_query, "text")
+    xml_to_write = parse_ncbi(search_query, "fasta", email)
+    text_to_write = parse_ncbi(search_query, "text", email)
 
     battery_writer("xml", xml_to_write, output_folder)
     battery_writer("text", text_to_write, output_folder)
@@ -59,14 +59,14 @@ def delete_folder_contents():
 
 
 def main():
-    # delete_folder_contents()
+    delete_folder_contents()
 
     # Edit this one to change search query
     test_genes = ['txid36190[Organism] mitochondria']
 
     # Edit this one to change location of storage (default ./storage)
     output_folder = "./storage/"
-    battery(test_genes, output_folder)
+    # battery(test_genes, output_folder, "wwinnett@iastate.edu")
 
 
 if __name__ == "__main__":
