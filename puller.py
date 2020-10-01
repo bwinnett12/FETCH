@@ -11,6 +11,8 @@ from indexer import get_query_from_indexes
 # Pulls all of the fastas from the query into a folder
 def move_individual_fasta_to(out_loc):
     query = get_query_from_indexes()
+    print(query[0])
+    print(query[1])
 
     # Species is 0
     # the next 5 for loops are nearly identical except first three is species
@@ -18,28 +20,28 @@ def move_individual_fasta_to(out_loc):
         # gets all of the file addresses that are in the folder
         for pos in glob.glob("./storage/fa/*.fa"):
             # if the gene is in the title (Standard packing), then moves file
-            if pos.split("_")[-1].split(".")[0] == species.replace(" ", "-"):
+            if pos.split("_")[-1].split(".")[0].lower() == species.replace(" ", "-").lower():
                 copy(pos, out_loc)
 
         # Repeats for all of the amino fastas
         for pos in glob.glob("./storage/faa/*.faa"):
-            if pos.split("_")[-1].split(".")[0] == species.replace(" ", "-"):
+            if pos.split("_")[-1].split(".")[0].lower() == species.replace(" ", "-").lower():
                 copy(pos, out_loc)
 
         # Repeats for genbank files
         for pos in glob.glob("./storage/gb/*.gb"):
-            if pos.split("/")[-1].split(".")[0] == species.replace(" ", "-"):
+            if pos.split("/")[-1].split(".")[0].lower() == species.replace(" ", "-").lower():
                 copy(pos, out_loc)
 
 
     # Gene is 1
     for gene in query[1]:
         for pos in glob.glob("./storage/fa/*.fa"):
-            if pos.split("_")[0].split("/")[-1] == gene:
+            if pos.split("_")[0].split("/")[-1].lower() == gene.lower():
                 copy(pos, out_loc)
 
         for pos in glob.glob("./storage/faa/*.faa"):
-            if pos.split("_")[0].split("/")[-1] == gene:
+            if pos.split("_")[0].split("/")[-1].lower() == gene.lower():
                 copy(pos, out_loc)
 
 
@@ -61,7 +63,7 @@ def pull_query_to_fasta(out_loc):
 
         # Searches for all files with the name as the gene
         for pos in glob.glob("./storage/fa/*.fa"):
-            if pos.split("_")[0].split("/")[-1] == gene:
+            if pos.split("_")[0].split("/")[-1].lower() == gene.lower():
                 # Adds names to a list
                 files_array.append(pos)
 
@@ -89,7 +91,7 @@ def pull_query_to_fasta(out_loc):
         files_array = []
 
         for pos in glob.glob("./storage/fa/*.fa"):
-            if pos.split("_")[1].strip(".fa") == species:
+            if pos.split("_")[1].strip(".fa").lower() == species.lower():
                 # Adds names to a list
                 files_array.append(pos)
 
@@ -133,9 +135,15 @@ def sando():
 
 
 def main():
-    test_out_loc = "/home/bill/Research/genetic_material/cold/"
+    # Edit out location before running
+    test_out_loc = ""
+
+    # Otherwise will use default where-ever the current working directory
+    out_location_default = os.getcwd() + "/output/"
     # move_sequences_to(test_out_loc)
-    pull_query_to_fasta(test_out_loc)
+
+
+    pull_query_to_fasta(out_location_default)
     r = 2
     # sando()
 
