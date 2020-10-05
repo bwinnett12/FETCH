@@ -40,22 +40,22 @@ def parse_ncbi(query_from_user, output_type, email):
 
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 # TODO - make this neater
-def battery(search_query, output_folder, email):
-
+def fetch(search_query, output_folder, email):
     xml_to_write = parse_ncbi(search_query, "fasta", email)
     text_to_write = parse_ncbi(search_query, "text", email)
 
     battery_writer("xml", xml_to_write, output_folder)
     battery_writer("text", text_to_write, output_folder)
 
-    reset_indexes()
 
 
-def delete_folder_contents():
-
-    files = glob.glob('./storage/*/*')
-    for f in files:
-        os.remove(f)
+def delete_folder_contents(folder):
+    structure = [folder + "*", folder + "*/*"]
+    structure = [folder + "*/*"]
+    for style in structure:
+        files = glob.glob(style)
+        for f in files:
+            os.remove(f)
 
 
 def main():
@@ -69,7 +69,6 @@ def main():
 
     # Edit this one to change location of storage (default ./storage)
     output_folder = "./storage/"
-    battery(test_genes, output_folder, "wwinnett@iastate.edu")
 
 
 if __name__ == "__main__":

@@ -144,7 +144,6 @@ def write_to_fasta(raw, output_location):
 
                         if qual['GBQualifier_name'] == "gene":
                             gene_name = qual['GBQualifier_value']
-                            add_to_index("genes", gene_name)
 
                         if qual['GBQualifier_name'] == 'note':
                             product_name = qual['GBQualifier_value']

@@ -1,4 +1,5 @@
 import glob
+import os
 
 """
 This module is a way to work with the indexes that are used for pulling and keeping track of the files
@@ -54,11 +55,9 @@ def check_index(index, term):
 # Sets the index back to none selected (;gene vs gene)
 # Also resets the indexes to what is found inside the storage folder
 # TODO - Stop hard-coding the path and Make reseting indexes optional
-def reset_indexes():
+def reset_indexes(storage_path):
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
-    def get_file_list(index):
-
-        path = "./storage/"
+    def get_file_list(index, path):
 
         fulllist = []
 
@@ -80,7 +79,10 @@ def reset_indexes():
     for index in ["species", "genes"]:
 
         # Gets an accurate list of what is in the local files (Currently ./storage/)
-        full_list = get_file_list(index)
+        full_list = get_file_list(index, storage_path)
+
+        if index == "species":
+            print(full_list)
 
         file = open(open_clarify(index), "w")
         file.close()
@@ -164,12 +166,23 @@ def get_query_from_indexes():
     return query_to_fetch
 
 
+# Sets up a default folder scheme for storage in any specified location
+def ensure_folder_scheme(path):
+    print(path)
+
+    folders = ["/fa/", "/full_fa/", "/faa/", "/full_faa/", "/gb/", "/genome/"]
+    for folder in folders:
+        print(path.strip("/") + folder)
+        os.makedirs(path.rstrip("/") + folder, exist_ok=True)
+
+
+# TODO - this to not be hardcoded
 # A helper method for simplifying all of the other methods
 def open_clarify(index):
     if index.lower() == "species":
-        return "./Indexes/species.lst"
+        return "./indexes/species.lst"
     elif index.lower() == "genes":
-        return "./Indexes/genes.lst"
+        return "./indexes/genes.lst"
     else:
         return False
 

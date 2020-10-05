@@ -1,31 +1,105 @@
 
 import configparser
+import argparse
 
-from fetcher import battery
+from fetcher import fetch, delete_folder_contents
+from puller import pull_query_to_fasta
+from indexer import reset_indexes, ensure_folder_scheme
 
-
-def parse_config():
-    config = configparser.ConfigParser()
-    config.read('ncbifetcher.config')
-    print(config.sections())
-
-    email = config['OPTIONS']['email']
-
-    location_index = config['INDEX']['index_location']
-    location_storage = config['STORAGE']['location_storage']
-    print(email)
 
 
 def main():
+    # Part where argparser figures out your command
+    parser = argparse.ArgumentParser(description='Parse NCBI and then work with Biological data')
+
+    parser.add_argument('-d', '--delete',
+                        dest='delete',
+                        default=False,
+                        action='store_true',
+                        help="delete current storage [only for testing purposes]")
+
+    parser.add_argument('-f', '--fetch',
+                        dest='fetch',
+                        default="",
+                        help='Fetches from the genebank and adds to storage')
+
+    parser.add_argument('-i', '--index',
+                        dest='index',
+                        action='store_true',
+                        help='Resets the indexes')
+
+    parser.add_argument('-p', '--pull',
+                        dest='pull',
+                        default=False,
+                        action='store_true',
+                        help="pull from storage")
+
+    parser.add_argument('-s', '--setup',
+                        dest='setup_structure',
+                        default="",
+                        help="Sets up a default structure for storage and indexes:"
+                             " NOT HOOKED UP [only for testing purposes]")
+
+
+    # This stores all of the values from the parser
+    args = parser.parse_args()
+    fetch_query = args.fetch
+    pull = args.pull
+    index = args.index
+    delete = args.delete
+    setup_structure = args.setup_structure
+
+    # Testing output
+    output = "Output: \n"
+
+
+    # THis is the part where we are reading from the config
+
     config = configparser.ConfigParser()
     config.read('ncbifetcher.config')
 
     email = config['OPTIONS']['email']
     location_index = config['INDEX']['index_location']
-    location_storage = config['STORAGE']['location_storage']
+    location_storage = config['STORAGE']['storage_location']
+    location_output = config['OUTPUT']['output_location']
 
-    # battery('txid36190[Organism] mitochondria', location_storage, email)
-    # parse_config()
+
+    # Testing: Deletes everything in the folders and resets the indexes
+    if delete:
+        print("deleting... \n")
+        delete_folder_contents(location_storage)
+        delete_folder_contents(location_output)
+        reset_indexes(location_storage)
+        return
+
+
+
+    # Fetches from genebank
+    if len(fetch_query) >= 1:
+        output += "Fetching: " + fetch_query + "\n"
+        fetch(fetch_query, location_storage, email)
+        reset_indexes(location_storage)
+
+
+    if index:
+        output += "Index: \n"
+        reset_indexes(location_storage)
+
+
+    # Pulling from storage
+    if pull:
+        output += "Pulling \n"
+        pull_query_to_fasta(location_output)
+
+
+    # For setting up a file structure at a location other than default
+    if len(setup_structure) >= 1:
+        output += "Setting up structure \n"
+        ensure_folder_scheme(setup_structure)
+
+
+
+    print(output)
 
 
 
