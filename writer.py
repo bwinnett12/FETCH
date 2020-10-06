@@ -2,7 +2,6 @@
 __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
-import os
 from Bio import SeqIO, Seq
 from Bio.Data.CodonTable import TranslationError
 from indexer import *
@@ -280,8 +279,4 @@ def write_fasta_to_individual(file, output_folder, option):
 
         # Spacer
         current_file.write(" " + "\n")
-
-
-
-
 

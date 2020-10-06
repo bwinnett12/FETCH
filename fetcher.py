@@ -59,16 +59,7 @@ def delete_folder_contents(folder):
 
 
 def main():
-    delete_folder_contents()
-
-    # Edit this one to change search query
-    test_genes = ['txid36190[Organism] mitochondria']
-    test_genes = ["NC_008073", "NC_023345", "NC_026192", "NC_018378"]
-    test_genes = "NC_008073, NC_023345, NC_026192, NC_018378"
-
-
-    # Edit this one to change location of storage (default ./storage)
-    output_folder = "./storage/"
+    print("hello from fetcher! \n Try running everything from main.py or through python3 main.py --help")
 
 
 if __name__ == "__main__":

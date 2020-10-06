@@ -135,17 +135,7 @@ def sando():
 
 
 def main():
-    # Edit out location before running
-    test_out_loc = ""
-
-    # Otherwise will use default where-ever the current working directory
-    out_location_default = os.getcwd() + "/output/"
-    # move_sequences_to(test_out_loc)
-
-
-    pull_query_to_fasta(out_location_default)
-    r = 2
-    # sando()
+    print("hello from puller!")
 
 
 

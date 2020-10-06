@@ -12,33 +12,39 @@ def main():
     # Part where argparser figures out your command
     parser = argparse.ArgumentParser(description='Parse NCBI and then work with Biological data')
 
+    # Argument for clearing out the storage folder (Mostly for testing purposes)
     parser.add_argument('-d', '--delete',
                         dest='delete',
                         default=False,
                         action='store_true',
                         help="delete current storage [only for testing purposes]")
 
+    # Argument for fetching.
     parser.add_argument('-f', '--fetch',
                         dest='fetch',
                         default="",
-                        help='Fetches from the genebank and adds to storage')
+                        help='Fetches from ncbi and adds to storage: \n '
+                             'Usage: -f [Accession number or boolean operators]')
 
     parser.add_argument('-i', '--index',
                         dest='index',
                         action='store_true',
-                        help='Resets the indexes')
+                        help='Resets the indexes. This can be done manually through this method or specified to do it'
+                             ' everytime from the configs.')
 
     parser.add_argument('-p', '--pull',
                         dest='pull',
                         default=False,
                         action='store_true',
-                        help="pull from storage")
+                        help="Pull from storage. "
+                             "The genes and species specified are specified in genes.lst and species.lst.")
 
     parser.add_argument('-s', '--setup',
                         dest='setup_structure',
                         default="",
-                        help="Sets up a default structure for storage and indexes:"
-                             " NOT HOOKED UP [only for testing purposes]")
+                        help="Usage: -s [storage location]" + "\n"
+                             " Sets up a default structure for storage and indexes."
+                             "This should be done when moving storage to a location outside of the cloned folder.")
 
 
     # This stores all of the values from the parser
@@ -51,7 +57,6 @@ def main():
 
     # Testing output
     output = "Output: \n"
-
 
     # THis is the part where we are reading from the config
 

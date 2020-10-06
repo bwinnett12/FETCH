@@ -189,8 +189,6 @@ def open_clarify(index):
 
 def main():
     print("Hello from indexer")
-    # reset_indexes()
-    # refresh("genes")
 
 
 if __name__ == '__main__':
