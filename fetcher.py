@@ -41,15 +41,16 @@ def parse_ncbi(query_from_user, output_type, email):
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 # TODO - make this neater
 def fetch(search_query, output_folder, email):
-    xml_to_write = parse_ncbi(search_query, "fasta", email)
-    text_to_write = parse_ncbi(search_query, "text", email)
+    for sing_query in search_query.split(","):
+        text_to_write = parse_ncbi(sing_query, "text", email)
+        battery_writer("text", text_to_write, output_folder)
 
+    xml_to_write = parse_ncbi(search_query, "fasta", email)
     battery_writer("xml", xml_to_write, output_folder)
-    battery_writer("text", text_to_write, output_folder)
 
 
 def delete_folder_contents(folder):
-    structure = [folder + "*", folder + "*/*"]
+    # structure = [folder + "*", folder + "*/*"]
     structure = [folder + "*/*"]
     for style in structure:
         files = glob.glob(style)

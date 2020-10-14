@@ -2,6 +2,7 @@ library(shiny)
 library(reticulate)
 
 repl
+# SCrew shiny
 
 setwd("/home/bill/Projects/ncbifetcher/")
 

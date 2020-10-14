@@ -11,8 +11,6 @@ from indexer import get_query_from_indexes
 # Pulls all of the fastas from the query into a folder
 def move_individual_fasta_to(out_loc):
     query = get_query_from_indexes()
-    print(query[0])
-    print(query[1])
 
     # Species is 0
     # the next 5 for loops are nearly identical except first three is species
@@ -45,7 +43,9 @@ def move_individual_fasta_to(out_loc):
 
 
 # Pulls all of the instances of the desired gene into a single fasta
-def pull_query_to_fasta(out_loc):
+def pull_query_to_fasta(out_loc, run_mafft):
+    print(run_mafft)
+    # Gets query from lists. By default, it will be [species, gene]
     query = get_query_from_indexes()
 
     for gene in query[1]:
@@ -76,7 +76,10 @@ def pull_query_to_fasta(out_loc):
                 current_file.write("\n")
 
         current_file.close()
-        align_fasta(out_loc_file)
+
+        # boolean parameter to run mafft
+        if run_mafft:
+            align_fasta(out_loc_file)
 
     for species in query[0]:
         out_loc_file = out_loc + species + ".fa"
@@ -103,7 +106,11 @@ def pull_query_to_fasta(out_loc):
                 current_file.write("\n")
 
         current_file.close()
-        align_fasta(out_loc_file)
+
+        # boolean parameter to run mafft
+        if run_mafft:
+            print(run_mafft)
+            align_fasta(out_loc_file)
 
 
 # When called, makes an aligned version of the fasta just pulled
@@ -120,22 +127,3 @@ def align_fasta(in_file_loc):
     stdout, stderr = mafft_cline()
     with open(out_file_base, "w") as handle:
         handle.write(stdout)
-
-
-
-# I like having a sandbox
-def sando():
-    r = 2
-    pulled_from_fasta_seq = []
-    pulled_from_fasta_id = []
-
-
-
-
-def main():
-    print("hello from puller!")
-
-
-
-if __name__ == '__main__':
-    main()

@@ -43,6 +43,7 @@ def write_to_gb(raw_data, output_folder):
     files_downloaded = []
 
     # Creates a variable to store all the genbank file
+
     lines = raw_data.split("\n")
 
     for line in lines:
@@ -63,7 +64,8 @@ def write_to_gb(raw_data, output_folder):
             current_file.write(raw_data)
             current_file.close()
 
-            add_to_index("species", organism_name)
+            # Adds to index
+            add_to_index("species", organism_name.capitalize())
 
             # Piggy backs genome writing to here
             write_genome(gb_location, output_folder)

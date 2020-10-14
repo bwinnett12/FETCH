@@ -30,6 +30,13 @@ def main():
                         help='Resets the indexes. This can be done manually through this method or specified to do it'
                              ' everytime from the configs.')
 
+    parser.add_argument('-m', '--mafft',
+                        dest='mafft',
+                        default=False,
+                        action='store_true',
+                        help="Runs mafft when pulling. Optional alignment but requires -p or --pull to be effective. "
+                             "Can also be specified to run automatically in config")
+
     parser.add_argument('-p', '--pull',
                         dest='pull',
                         default=False,
@@ -42,14 +49,17 @@ def main():
                         default="",
                         help="Usage: -s [storage location]" + "\n"
                                                               " Sets up a default structure for storage and indexes."
-                                                              "This should be done when moving storage to a location outside of the cloned folder.")
+                                                              "This should be done when moving storage to a location "
+                                                              "outside of the cloned folder.")
 
     # This stores all of the values from the parser
     args = parser.parse_args()
-    fetch_query = args.fetch
-    pull = args.pull
-    index = args.index
+
     delete = args.delete
+    fetch_query = args.fetch
+    index = args.index
+    mafft_args = args.mafft
+    pull = args.pull
     setup_structure = args.setup_structure
 
     # Testing output
@@ -65,37 +75,47 @@ def main():
     location_storage = config['STORAGE']['storage_location']
     location_output = config['OUTPUT']['output_location']
 
+    reset_indexes_default = config['OPTIONS']['reset_indexes_everytime']
+    run_mafft_config = config['OPTIONS']['run_mafft_everytime']
+
     # Testing: Deletes everything in the folders and resets the indexes
     if delete:
         print("deleting... \n")
         delete_folder_contents(location_storage)
         delete_folder_contents(location_output)
-        reset_indexes(location_storage)
+
+        # Optional resetting indexes
+        if reset_indexes_default == 1 or reset_indexes_default:
+            reset_indexes(location_storage)
         return
 
-    # Fetches from genebank
+    # Fetches from genbank
     if len(fetch_query) >= 1:
-        output += "Fetching: " + fetch_query + "\n"
         fetch(fetch_query, location_storage, email)
-        reset_indexes(location_storage)
+
+        # Optional resetting indexes
+        if reset_indexes_default == 1 or reset_indexes_default:
+            reset_indexes(location_storage)
         return
 
     # This is a way to sort the indexes
     if index:
         output += "Index: \n"
+
         reset_indexes(location_storage)
+        return
 
     # Pulling from storage - Default set to wherever index says to go
     if pull:
         output += "Pulling \n"
-        pull_query_to_fasta(location_output)
+
+        pull_query_to_fasta(location_output, run_mafft=mafft_args or run_mafft_config == 1 or run_mafft_config == "true")
+        return
 
     # For setting up a file structure at a location other than default
     if len(setup_structure) >= 1:
-        output += "Setting up structure \n"
         ensure_folder_scheme(setup_structure)
-
-    print(output)
+        return
 
 
 if __name__ == "__main__":

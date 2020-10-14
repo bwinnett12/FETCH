@@ -14,7 +14,7 @@ def add_to_index(index, term):
 
     # If term not there, appends to end
     if not check_index(index, term):
-        file.write(";" + term.lower() + "\n")
+        file.write(";" + term + "\n")
     file.close()
 
 
@@ -56,6 +56,7 @@ def check_index(index, term):
 # Also resets the indexes to what is found inside the storage folder
 # TODO - Stop hard-coding the path and Make reseting indexes optional
 def reset_indexes(storage_path):
+
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
     def get_file_list(index, path):
 
@@ -76,15 +77,10 @@ def reset_indexes(storage_path):
         return list(set(fulllist))
 
     # Ran once for each index
-    print("HEre")
     for index in ["species", "genes"]:
-        print(index)
 
         # Gets an accurate list of what is in the local files (Currently ./storage/)
         full_list = get_file_list(index, storage_path)
-
-        if index == "species":
-            print(full_list)
 
         file = open(open_clarify(index), "w")
         file.close()
@@ -110,7 +106,7 @@ def reset_indexes(storage_path):
         file.close()
 
         # Refreshes to organize and sort it again
-        # refresh(index)
+        refresh(index)
 
 
 # Does normalization on lists
@@ -144,7 +140,6 @@ def refresh(index):
 
     # Has to rewrite everything
     for line in lines:
-        print(line.strip("\n"))
         file.write(";" + str(line)) if line.strip("\n") in appended else file.write(line)
     file.close()
 
@@ -174,7 +169,6 @@ def ensure_folder_scheme(path):
 
     folders = ["/fa/", "/full_fa/", "/faa/", "/full_faa/", "/gb/", "/genome/"]
     for folder in folders:
-        print(path.strip("/") + folder)
         os.makedirs(path.rstrip("/") + folder, exist_ok=True)
 
 
@@ -188,4 +182,3 @@ def open_clarify(index):
     else:
         return False
 
-reset_indexes("./storage")
