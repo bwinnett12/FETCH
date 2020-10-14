@@ -76,7 +76,9 @@ def reset_indexes(storage_path):
         return list(set(fulllist))
 
     # Ran once for each index
+    print("HEre")
     for index in ["species", "genes"]:
+        print(index)
 
         # Gets an accurate list of what is in the local files (Currently ./storage/)
         full_list = get_file_list(index, storage_path)
@@ -108,7 +110,7 @@ def reset_indexes(storage_path):
         file.close()
 
         # Refreshes to organize and sort it again
-        refresh(index)
+        # refresh(index)
 
 
 # Does normalization on lists
@@ -186,19 +188,4 @@ def open_clarify(index):
     else:
         return False
 
-
-def main():
-    print("Hello from indexer")
-
-
-if __name__ == '__main__':
-    main()
-
-
-# Very pythonic alternative to the quicksort from earlier
-def quick_sort(array):
-    if len(array) <= 1:
-        return array
-    else:
-        return quick_sort([e for e in array[1:] if e <= array[0]]) + [array[0]] + quick_sort(
-            [e for e in array[1:] if e > array[0]])
+reset_indexes("./storage")

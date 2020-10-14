@@ -75,6 +75,11 @@ That command sets up a file structure at that location. You must also switch the
 - [ ] Reintegrate alignment
 - [ ] Add more optional parameters within the command utility and config file
 
+- [ ] Codon align selected genes PAL2NAL
+- [ ] Run Gblocks on alignment
+- [ ] Run RAXML / FASTREE to get phylogenetic trees
+
+
 ###### Late game TODO 
 - [ ] Integrate R shiny
 - [ ] Provide windows support for mafft

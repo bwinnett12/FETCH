@@ -1,11 +1,9 @@
-
 import configparser
 import argparse
 
 from fetcher import fetch, delete_folder_contents
 from puller import pull_query_to_fasta
 from indexer import reset_indexes, ensure_folder_scheme
-
 
 
 def main():
@@ -43,9 +41,8 @@ def main():
                         dest='setup_structure',
                         default="",
                         help="Usage: -s [storage location]" + "\n"
-                             " Sets up a default structure for storage and indexes."
-                             "This should be done when moving storage to a location outside of the cloned folder.")
-
+                                                              " Sets up a default structure for storage and indexes."
+                                                              "This should be done when moving storage to a location outside of the cloned folder.")
 
     # This stores all of the values from the parser
     args = parser.parse_args()
@@ -68,7 +65,6 @@ def main():
     location_storage = config['STORAGE']['storage_location']
     location_output = config['OUTPUT']['output_location']
 
-
     # Testing: Deletes everything in the folders and resets the indexes
     if delete:
         print("deleting... \n")
@@ -77,35 +73,29 @@ def main():
         reset_indexes(location_storage)
         return
 
-
-
     # Fetches from genebank
     if len(fetch_query) >= 1:
         output += "Fetching: " + fetch_query + "\n"
         fetch(fetch_query, location_storage, email)
         reset_indexes(location_storage)
+        return
 
-
+    # This is a way to sort the indexes
     if index:
         output += "Index: \n"
         reset_indexes(location_storage)
 
-
-    # Pulling from storage
+    # Pulling from storage - Default set to wherever index says to go
     if pull:
         output += "Pulling \n"
         pull_query_to_fasta(location_output)
-
 
     # For setting up a file structure at a location other than default
     if len(setup_structure) >= 1:
         output += "Setting up structure \n"
         ensure_folder_scheme(setup_structure)
 
-
-
     print(output)
-
 
 
 if __name__ == "__main__":

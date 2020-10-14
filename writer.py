@@ -1,4 +1,3 @@
-
 __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
@@ -6,15 +5,14 @@ from Bio import SeqIO, Seq
 from Bio.Data.CodonTable import TranslationError
 from indexer import *
 
+
 # TODO - This a list of things to fix for this file
 # Add genome to battery
 # Get translation table
 
 
-
 # This is a way to consolidate all of the processes that write files
 def battery_writer(format_type, raw_data, output_folder):
-
     if format_type == "text":
         write_to_gb(raw_data, output_folder)
 
@@ -36,10 +34,8 @@ def battery_writer(format_type, raw_data, output_folder):
         print("Writing failed: Check format type. Was ", format_type)
 
 
-
 # Writes genbank files in the form of text to species.gb
 def write_to_gb(raw_data, output_folder):
-
     # if empty then there's nothing to do
     if raw_data == "":
         return "No files downloaded. Search query had no results"
@@ -54,7 +50,8 @@ def write_to_gb(raw_data, output_folder):
         if 'ORGANISM' in line:
 
             # Splits line and declares the file id based on desired folder and organism
-            gb_location = output_folder + "gb/" + '-'.join(line.split()[1:]) + ".gb"
+            organism_name = '-'.join(line.split()[1:])
+            gb_location = output_folder + "gb/" + organism_name + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
@@ -66,6 +63,8 @@ def write_to_gb(raw_data, output_folder):
             current_file.write(raw_data)
             current_file.close()
 
+            add_to_index("species", organism_name)
+
             # Piggy backs genome writing to here
             write_genome(gb_location, output_folder)
 
@@ -74,7 +73,6 @@ def write_to_gb(raw_data, output_folder):
 
 # Writes the whole genome to a fasta in the genome folder of local storage
 def write_genome(file, output_folder):
-
     # From here to the next section is just to get the file name of the organism
     lines = open(file, "r").readlines()
     out_loc = ""
@@ -99,7 +97,6 @@ def write_genome(file, output_folder):
             count = SeqIO.write(sequences, output_handle, "fasta")
 
 
-
 # Creates a fasta for each file
 # Also uses information from this which is then sent into a translated .faa file
 def write_to_fasta(raw, output_location):
@@ -119,9 +116,6 @@ def write_to_fasta(raw, output_location):
             current_file = open(out_loc, "x")
             # files_downloaded.append(raw[j]["GBSeq_locus"])
         current_file = open(out_loc, "w")
-
-
-        # Where the AMino acid version was
 
         # Loops through the features of each gene
         for i, feature in enumerate(raw[j]["GBSeq_feature-table"]):
@@ -149,10 +143,8 @@ def write_to_fasta(raw, output_location):
 
                     # Creates a header based on what we have
                     header = ">" + " ".join([locus, gene_name,
-                                       "-", product_name,
-                                       raw[j]["GBSeq_organism"]])
-
-
+                                             "-", product_name,
+                                             raw[j]["GBSeq_organism"]])
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
@@ -167,7 +159,7 @@ def write_to_fasta(raw, output_location):
                 try:
                     # Many genes are listed as "complimentary". So gets sequence if they are on the other strand
                     if int(feature["GBFeature_intervals"][0]['GBInterval_from']) > \
-                       int(feature["GBFeature_intervals"][0]['GBInterval_to']):
+                            int(feature["GBFeature_intervals"][0]['GBInterval_to']):
 
                         sequence_gene = sequence[int(feature["GBFeature_intervals"][0]['GBInterval_to']) - 1:
                                                  int(feature["GBFeature_intervals"][0]['GBInterval_from']) - 1].upper()
@@ -181,9 +173,6 @@ def write_to_fasta(raw, output_location):
                 except KeyError:
                     # print("Sequence - KeyError")
                     sequence_gene = feature['GBFeature_intervals'][0]['GBInterval_point']
-
-
-
 
                 # Writes each part individually
                 try:
@@ -209,17 +198,14 @@ def write_to_fasta(raw, output_location):
     return files_downloaded
 
 
-
 # Makes a .fasta that includes a protein copy with it
 # Piggy tails off the DNA to fasta version (The only difference is the translated sequence)
 def write_translation_to_fasta(file, out_location):
-
     # For the amino acid version
     out_loc = out_location + "full_faa/" + file.split("/")[-1].strip(".fa") + ".faa"
     if not os.path.isfile(out_loc):
         current_file_protein = open(out_loc, "x")
     current_file_protein = open(out_loc, "w")
-
 
     for record in SeqIO.parse(file, "fasta"):
         try:
@@ -229,7 +215,6 @@ def write_translation_to_fasta(file, out_location):
             continue
 
         current_file_protein.write(record.description + "\n")
-
 
         for n in range(0, len(sequence), 75):
             current_file_protein.write(str(sequence[n:n + 75]) + "\n")
@@ -243,7 +228,6 @@ def write_translation_to_fasta(file, out_location):
 # Can be used for .fa or .faa
 # TODO - update chart selector
 def write_fasta_to_individual(file, output_folder, option):
-
     for record in SeqIO.parse(file, "fasta"):
         # IF record is empty or gene name is missing, skips it
         if record.description.split()[1] == '-' or record.description.split()[1] == ' ' or record.seq == '':
@@ -279,4 +263,3 @@ def write_fasta_to_individual(file, output_folder, option):
 
         # Spacer
         current_file.write(" " + "\n")
-

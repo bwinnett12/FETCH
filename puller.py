@@ -33,7 +33,6 @@ def move_individual_fasta_to(out_loc):
             if pos.split("/")[-1].split(".")[0].lower() == species.replace(" ", "-").lower():
                 copy(pos, out_loc)
 
-
     # Gene is 1
     for gene in query[1]:
         for pos in glob.glob("./storage/fa/*.fa"):
@@ -43,7 +42,6 @@ def move_individual_fasta_to(out_loc):
         for pos in glob.glob("./storage/faa/*.faa"):
             if pos.split("_")[0].split("/")[-1].lower() == gene.lower():
                 copy(pos, out_loc)
-
 
 
 # Pulls all of the instances of the desired gene into a single fasta

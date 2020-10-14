@@ -48,7 +48,6 @@ def fetch(search_query, output_folder, email):
     battery_writer("text", text_to_write, output_folder)
 
 
-
 def delete_folder_contents(folder):
     structure = [folder + "*", folder + "*/*"]
     structure = [folder + "*/*"]
