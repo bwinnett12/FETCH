@@ -7,7 +7,7 @@ import os
 
 from Bio import Entrez
 from writer import battery_writer
-from indexer import reset_indexes
+from indexer import ensure_folder_scheme
 
 
 # TODO - Have the user to input their email
@@ -41,6 +41,10 @@ def parse_ncbi(query_from_user, output_type, email):
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 # TODO - make this neater
 def fetch(search_query, output_folder, email):
+
+    # Incase the storage is gone for some reason
+    ensure_folder_scheme(output_folder)
+
     for sing_query in search_query.split(","):
         text_to_write = parse_ncbi(sing_query, "text", email)
         battery_writer("text", text_to_write, output_folder)
