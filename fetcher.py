@@ -4,6 +4,7 @@ __email__ = "bwinnett12@gmail.com"
 
 import glob
 import os
+import time
 
 from Bio import Entrez
 from writer import battery_writer
@@ -45,13 +46,22 @@ def fetch(search_query, output_folder, email):
     # In case the storage is gone for some reason
     ensure_folder_scheme(output_folder)
 
-    for sing_query in search_query.split(","):
-        text_to_write = parse_ncbi(sing_query, "text", email)
-        battery_writer("text", text_to_write, output_folder)
+    search_query = search_query.split(',')
 
-    # TODO - For translation, this should be run second. Fix this
-    xml_to_write = parse_ncbi(search_query, "fasta", email)
-    battery_writer("xml", xml_to_write, output_folder)
+    # Staggers the fetching or else ncbi will complain
+    for i in range(0, len(search_query), 1):
+
+        sett = search_query[i:i+1]
+
+        for sing_query in sett:
+            text_to_write = parse_ncbi(sing_query, "text", email)
+            battery_writer("text", text_to_write, output_folder)
+
+        # TODO - For translation, this should be run second. Fix this
+        xml_to_write = parse_ncbi(sett, "fasta", email)
+        battery_writer("xml", xml_to_write, output_folder)
+
+        time.sleep(.5)
 
 
 def delete_folder_contents(folder):
