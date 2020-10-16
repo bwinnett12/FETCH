@@ -8,6 +8,8 @@ If there are any questions, concerns, or nice stories; please don't hesitate to 
 This project was made in conjunction with Lavrov lab and under the supervision of Dr. Muthye and Dr. Lavrov.
 
 ### Instructions:
+
+
 All of the available features are an adjustment of this command from within the cloned file:
 ```
 python3 main.py --help
@@ -70,10 +72,10 @@ That command sets up a file structure at that location. You must also switch the
 - [x] Allow for the storage and output to have easy integration
 - [x] Allow the program to be called from the command line
 - [ ] Implement an algorithm for output of puller
-- [ ] Allow translation to be specified by the genbank file rather than default
+- [x] Allow translation to be specified by the genbank file rather than default
 - [x] Allow the user to specify an optional parameters to the argument.
 - [ ] Reintegrate alignment
-- [ ] Add more optional parameters within the command utility and config file
+- [-] Add more optional parameters within the command utility and config file
 
 - [ ] Codon align selected genes PAL2NAL
 - [ ] Run Gblocks on alignment

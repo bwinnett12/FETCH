@@ -14,8 +14,8 @@ from indexer import ensure_folder_scheme
 # Parses the genebank and fetches what the user inputs
 def parse_ncbi(query_from_user, output_type, email):
 
-    # Always tell ncbi who you are. Using mine until testing is over and the user will input theirs
-    Entrez.email = "wwinnett@iastate.edu"
+    # Always tell ncbi who you are. Or else it won't let you fetch
+    Entrez.email = email
 
     # searches for those who fit your request
     handle = Entrez.esearch(db="nucleotide", term=query_from_user)
@@ -42,13 +42,14 @@ def parse_ncbi(query_from_user, output_type, email):
 # TODO - make this neater
 def fetch(search_query, output_folder, email):
 
-    # Incase the storage is gone for some reason
+    # In case the storage is gone for some reason
     ensure_folder_scheme(output_folder)
 
     for sing_query in search_query.split(","):
         text_to_write = parse_ncbi(sing_query, "text", email)
         battery_writer("text", text_to_write, output_folder)
 
+    # TODO - For translation, this should be run second. Fix this
     xml_to_write = parse_ncbi(search_query, "fasta", email)
     battery_writer("xml", xml_to_write, output_folder)
 

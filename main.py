@@ -86,34 +86,38 @@ def main():
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
-            reset_indexes(location_storage)
+            reset_indexes(location_storage, location_index)
         return
 
     # Fetches from genbank
     if len(fetch_query) >= 1:
+        print("Fetching...")
         fetch(fetch_query, location_storage, email)
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
-            reset_indexes(location_storage)
+            reset_indexes(location_storage, location_index)
         return
 
     # This is a way to sort the indexes
     if index:
+        print("Reseting indexes...")
         output += "Index: \n"
 
-        reset_indexes(location_storage)
+        reset_indexes(location_storage, location_index)
         return
 
     # Pulling from storage - Default set to wherever index says to go
     if pull:
-        output += "Pulling \n"
+        print("Pulling...")
 
-        pull_query_to_fasta(location_output, run_mafft=mafft_args or run_mafft_config == 1 or run_mafft_config == "true")
+        pull_query_to_fasta(location_output, location_index,
+                            run_mafft=mafft_args or run_mafft_config == 1 or run_mafft_config == "true")
         return
 
     # For setting up a file structure at a location other than default
     if len(setup_structure) >= 1:
+        print("Setting up structure at " + setup_structure + "...")
         ensure_folder_scheme(setup_structure)
         return
 

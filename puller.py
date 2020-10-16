@@ -9,8 +9,8 @@ from indexer import get_query_from_indexes
 
 
 # Pulls all of the fastas from the query into a folder
-def move_individual_fasta_to(out_loc):
-    query = get_query_from_indexes()
+def move_individual_fasta_to(out_loc, indexes_path):
+    query = get_query_from_indexes(indexes_path)
 
     # Species is 0
     # the next 5 for loops are nearly identical except first three is species
@@ -43,10 +43,10 @@ def move_individual_fasta_to(out_loc):
 
 
 # Pulls all of the instances of the desired gene into a single fasta
-def pull_query_to_fasta(out_loc, run_mafft):
+def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
     print(run_mafft)
     # Gets query from lists. By default, it will be [species, gene]
-    query = get_query_from_indexes()
+    query = get_query_from_indexes(indexes_location)
 
     for gene in query[1]:
         # names output folder to gene.fa
@@ -109,7 +109,6 @@ def pull_query_to_fasta(out_loc, run_mafft):
 
         # boolean parameter to run mafft
         if run_mafft:
-            print(run_mafft)
             align_fasta(out_loc_file)
 
 

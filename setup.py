@@ -18,6 +18,7 @@ setup(name='ncbifetcher',
             'biopython',
             'glob3',
             'argparse',
+            'Bio',
       ],
       # entry_points = {
       #   'console_scripts': ['ncbifetch=ncbifetch.command_line:main'],
