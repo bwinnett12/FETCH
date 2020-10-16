@@ -9,6 +9,13 @@ This project was made in conjunction with Lavrov lab and under the supervision o
 
 ### Instructions:
 
+First, run this command (from the project directory) to ensure that your system has all of the required dependencies:
+
+```
+pip install .
+```
+
+Then you must enter any information into ncbifetcher.config. Email is required to fetch anything
 
 All of the available features are an adjustment of this command from within the cloned file:
 ```
