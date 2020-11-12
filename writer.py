@@ -6,11 +6,6 @@ from Bio.Data.CodonTable import TranslationError
 from indexer import *
 
 
-# TODO - This a list of things to fix for this file
-# Add genome to battery
-# Get translation table
-
-
 # This is a way to consolidate all of the processes that write files
 def battery_writer(format_type, raw_data, output_folder):
     if format_type == "text":
@@ -24,7 +19,7 @@ def battery_writer(format_type, raw_data, output_folder):
 
         for file in files_created:
 
-            transl_table = get_transl_table(output_folder.rstrip("/") + "/gb/" + file.rstrip(".fa") + ".gb")
+            transl_table = get_transl_table(output_folder.rstrip("/") + "/gb/" + file.rstrip("_full.fa") + ".gb")
             # Writes full fasta to translated full faa
             write_translation_to_fasta(output_folder + fa_location + file, output_folder, transl_table)
 
@@ -49,7 +44,6 @@ def get_transl_table(genbank_file):
         print("File not found for:", genbank_file)
     # default since we are into mitochondria
     return 4
-
 
 
 # Writes genbank files in the form of text to species.gb
@@ -102,7 +96,7 @@ def write_genome(file, output_folder):
         if 'ORGANISM' in line:
 
             # Splits line and declares the file id based on desired folder and organism
-            out_loc = output_folder + "genome/" + '-'.join(line.split()[1:]) + ".fa"
+            out_loc = output_folder + "genome/" + '-'.join(line.split()[1:]) + "_genome.fa"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(out_loc):
@@ -129,7 +123,7 @@ def write_to_fasta(raw, output_location):
         sequence = raw[j]["GBSeq_sequence"]
 
         # Variable for the to be named output location
-        out_loc = output_location + "full_fa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + ".fa"
+        out_loc = output_location + "full_fa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + "_full.fa"
 
         # For the DNA version
         if not os.path.isfile(out_loc):
@@ -213,8 +207,6 @@ def write_to_fasta(raw, output_location):
         # current_file_protein.close()
         current_file.close()
 
-    # return str(len(files_downloaded)) + " fasta - Names are: " + str(files_downloaded) + "\n" + \
-    #     str(len(amino_downloaded)) + " amino fasta - Names are: " + str(amino_downloaded)
     return files_downloaded
 
 
@@ -229,7 +221,7 @@ def write_translation_to_fasta(file, out_location, table):
 
     for record in SeqIO.parse(file, "fasta"):
         try:
-            sequence = Seq.translate(record.seq, table=table)
+            sequence = Seq.translate(record.seq[:-(len(record.seq) % 3)], table=table)
         except TranslationError:
             # print(TranslationError)
             continue
@@ -246,14 +238,13 @@ def write_translation_to_fasta(file, out_location, table):
 
 # Takes a fasta and breaks every gene into its own file
 # Can be used for .fa or .faa
-# TODO - update chart selector
 def write_fasta_to_individual(file, output_folder, option, table):
     for record in SeqIO.parse(file, "fasta"):
         # IF record is empty or gene name is missing, skips it
         if record.description.split()[1] == '-' or record.description.split()[1] == ' ' or record.seq == '':
             continue
 
-        file_name = record.description.split()[1] + "_" + file.split("/")[-1].split(".")[0]
+        file_name = record.description.split()[1] + "_" + file.split("/")[-1].split(".")[0].rstrip("_full")
 
         # Options based on if the option is fasta or if it needs to be translated
         if option == "fa":
@@ -273,7 +264,7 @@ def write_fasta_to_individual(file, output_folder, option, table):
 
         # if .faa, translates sequence. Else keeps previous
         try:
-            sequence = Seq.translate(record.seq, table=table) if option == "faa" else record.seq
+            sequence = Seq.translate(record.seq[:-(len(record.seq) % 3)], table=table) if option == "faa" else record.seq
         except TranslationError:
             sequence = record.seq
 

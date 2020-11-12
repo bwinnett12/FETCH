@@ -32,11 +32,19 @@ python3 main.py -f [ncbi query]
 
 Query can be treated as if you were searching ncbi by itself. So things like accession numbers, taxonomy (such as txid2754381[Organism]), or boolean operators (mouse AND mitochondria). Running this can also updates the indexes (gene.lst and species.lst). It is on by default, but can be switched off from the ncbifetcher.config
 
+Alternatively, if you have a text file of all accession numbers, you can feed that in as the input. Such as:
+```
+python3 main.py -f [text_file_of_accession_numbers.txt]
+```
+
+It may take longer than expected since each query is staggered to reduce load on NCBI servers.
+
+
 2) The genes can be pulled from storage and consolidated into a new fasta file containing all of the genes from a species and from a gene. To specify which genes and/or species, uncomment the genes or species you want from the index. 
 
 ```
 Selected: ATP6,
-Unselected or commented out: ;ATP6.
+Unselected or commented out: ;ATP6
 ```
 
 By default, the comment is a semi-colon. The indexes location is also under the indexes folder in the project directory. The outputs are fastas and the clustal aligned files. 
@@ -76,13 +84,8 @@ That command sets up a file structure at that location. You must also switch the
 - Align the fasta and save as a clustal aligned file (.aln)
 
 #### TODO
-- [x] Allow for the storage and output to have easy integration
-- [x] Allow the program to be called from the command line
 - [ ] Implement an algorithm for output of puller
-- [x] Allow translation to be specified by the genbank file rather than default
-- [x] Allow the user to specify an optional parameters to the argument.
-- [ ] Reintegrate alignment
-- [-] Add more optional parameters within the command utility and config file
+- [ ] Add more optional parameters within the command utility and config file
 
 - [ ] Codon align selected genes PAL2NAL
 - [ ] Run Gblocks on alignment
@@ -94,4 +97,3 @@ That command sets up a file structure at that location. You must also switch the
 - [ ] Provide windows support for mafft
 
 #### Known issues
-- [x] Translating of sequence is not being called.

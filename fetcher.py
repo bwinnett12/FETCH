@@ -1,4 +1,3 @@
-
 __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
@@ -11,10 +10,8 @@ from writer import battery_writer
 from indexer import ensure_folder_scheme
 
 
-# TODO - Have the user to input their email
 # Parses the genebank and fetches what the user inputs
 def parse_ncbi(query_from_user, output_type, email):
-
     # Always tell ncbi who you are. Or else it won't let you fetch
     Entrez.email = email
 
@@ -40,9 +37,7 @@ def parse_ncbi(query_from_user, output_type, email):
 
 
 # Something to run to run both functions. Ultimately will be done using R (Front End)
-# TODO - make this neater
 def fetch(search_query, output_folder, email):
-
     # In case the storage is gone for some reason
     ensure_folder_scheme(output_folder)
     search_query = search_query.split(',')
@@ -52,16 +47,13 @@ def fetch(search_query, output_folder, email):
 
     # Staggers the fetching or else ncbi will complain
     for i in range(0, len(search_query) - 1, 2):
-        sett = search_query[i:i+2]
+        sett = search_query[i:i + 2]
         # We can get away with two series then a 1 second wait
         for sing_query in sett:
-
             text_to_write = parse_ncbi(sing_query, "text", email)
             battery_writer("text", text_to_write, output_folder)
             # time.sleep(.25)
 
-
-            # TODO - For translation, this should be run second. Fix this
             xml_to_write = parse_ncbi(sing_query, "fasta", email)
             battery_writer("xml", xml_to_write, output_folder)
             # time.sleep(.25)
@@ -69,9 +61,6 @@ def fetch(search_query, output_folder, email):
 
     millis_after = int(round(time.time() * 1000))
     print("Search time (sec): ", (millis_after - millis_before) / 1000)
-
-
-
 
 
 def delete_folder_contents(folder):

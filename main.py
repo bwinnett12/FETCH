@@ -1,5 +1,6 @@
 import configparser
 import argparse
+import os
 
 from fetcher import fetch, delete_folder_contents
 from puller import pull_query_to_fasta
@@ -23,12 +24,6 @@ def main():
                         default="",
                         help='Fetches from ncbi and adds to storage: \n '
                              'Usage: -f [Accession number or boolean operators]')
-
-    parser.add_argument('--file',
-                        dest='file',
-                        default="",
-                        help='Fetches from ncbi from a file of accession numbers and adds to storage: \n '
-                             'Usage: --file [Accession number or boolean operators]')
 
     parser.add_argument('-i', '--index',
                         dest='index',
@@ -64,7 +59,6 @@ def main():
     delete = args.delete
 
     query_fetch = args.fetch
-    query_file = args.file
     index = args.index
 
     mafft_args = args.mafft
@@ -74,8 +68,8 @@ def main():
     # Testing output
     output = "Output: \n"
 
-    # THis is the part where we are reading from the config
 
+    # THis is the part where we are reading from the config
     config = configparser.ConfigParser()
     config.read('ncbifetcher.config')
 
@@ -98,29 +92,25 @@ def main():
             reset_indexes(location_storage, location_index)
         return
 
-    # Fetching from a file
-    if len(query_file) >= 1:
-        print("Fetching based on file: ", query_file)
-
-        accession_numbers_from_file = []
-        lines = open(query_file, "r")
-        for line in lines:
-            accession_numbers_from_file.append(line.strip().strip('\n'))
-
-        accession_numbers_from_file = ','.join(accession_numbers_from_file)
-
-        # Fetches based on the accession numbers
-        fetch(accession_numbers_from_file, location_storage, email)
-
-        # Optional resetting indexes
-        if reset_indexes_default == 1 or reset_indexes_default:
-            reset_indexes(location_storage, location_index)
-        return
-
     # Fetches from genbank
     if len(query_fetch) >= 1:
-        print("Fetching...")
-        fetch(query_fetch, location_storage, email)
+        # If the input is a file, fetches all from the file
+        if os.path.isfile(query_fetch):
+            print("Fetching from file: ", query_fetch)
+            accession_numbers_from_file = []
+            lines = open(query_fetch, "r")
+
+            for line in lines:  # Gets every possible entry from file
+                accession_numbers_from_file.append(line.strip().strip('\n'))
+
+            accession_numbers_from_file = ','.join(accession_numbers_from_file)
+
+            # Fetches based on the accession numbers
+            fetch(accession_numbers_from_file, location_storage, email)
+
+        else:  # Fetches the single query
+            print("Fetching...")
+            fetch(query_fetch, location_storage, email)
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
