@@ -24,6 +24,12 @@ def main():
                         help='Fetches from ncbi and adds to storage: \n '
                              'Usage: -f [Accession number or boolean operators]')
 
+    parser.add_argument('--file',
+                        dest='file',
+                        default="",
+                        help='Fetches from ncbi from a file of accession numbers and adds to storage: \n '
+                             'Usage: --file [Accession number or boolean operators]')
+
     parser.add_argument('-i', '--index',
                         dest='index',
                         action='store_true',
@@ -56,8 +62,11 @@ def main():
     args = parser.parse_args()
 
     delete = args.delete
-    fetch_query = args.fetch
+
+    query_fetch = args.fetch
+    query_file = args.file
     index = args.index
+
     mafft_args = args.mafft
     pull = args.pull
     setup_structure = args.setup_structure
@@ -89,10 +98,29 @@ def main():
             reset_indexes(location_storage, location_index)
         return
 
+    # Fetching from a file
+    if len(query_file) >= 1:
+        print("Fetching based on file: ", query_file)
+
+        accession_numbers_from_file = []
+        lines = open(query_file, "r")
+        for line in lines:
+            accession_numbers_from_file.append(line.strip().strip('\n'))
+
+        accession_numbers_from_file = ','.join(accession_numbers_from_file)
+
+        # Fetches based on the accession numbers
+        fetch(accession_numbers_from_file, location_storage, email)
+
+        # Optional resetting indexes
+        if reset_indexes_default == 1 or reset_indexes_default:
+            reset_indexes(location_storage, location_index)
+        return
+
     # Fetches from genbank
-    if len(fetch_query) >= 1:
+    if len(query_fetch) >= 1:
         print("Fetching...")
-        fetch(fetch_query, location_storage, email)
+        fetch(query_fetch, location_storage, email)
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
