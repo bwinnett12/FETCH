@@ -44,7 +44,6 @@ def move_individual_fasta_to(out_loc, indexes_path):
 
 # Pulls all of the instances of the desired gene into a single fasta
 def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
-    print(run_mafft)
     # Gets query from lists. By default, it will be [species, gene]
     query = get_query_from_indexes(indexes_location)
 

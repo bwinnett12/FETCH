@@ -39,11 +39,14 @@ def battery_writer(format_type, raw_data, output_folder):
 # Gets the translation table from gb file
 def get_transl_table(genbank_file):
 
-    file = open(genbank_file)
-    for line in file.readlines():
-        if "/transl_table=" in line:
-            line = line.split("/transl_table=")
-            return int(line[-1].strip('\n'))
+    try:
+        file = open(genbank_file)
+        for line in file.readlines():
+            if "/transl_table=" in line:
+                line = line.split("/transl_table=")
+                return int(line[-1].strip('\n'))
+    except FileNotFoundError:
+        print("File not found for:", genbank_file)
     # default since we are into mitochondria
     return 4
 
