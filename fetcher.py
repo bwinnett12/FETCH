@@ -45,23 +45,33 @@ def fetch(search_query, output_folder, email):
 
     # In case the storage is gone for some reason
     ensure_folder_scheme(output_folder)
-
     search_query = search_query.split(',')
 
+    # I like timing things
+    millis_before = int(round(time.time() * 1000))
+
     # Staggers the fetching or else ncbi will complain
-    for i in range(0, len(search_query), 1):
-
-        sett = search_query[i:i+1]
-
+    for i in range(0, len(search_query) - 1, 2):
+        sett = search_query[i:i+2]
+        # We can get away with two series then a 1 second wait
         for sing_query in sett:
+
             text_to_write = parse_ncbi(sing_query, "text", email)
             battery_writer("text", text_to_write, output_folder)
+            # time.sleep(.25)
 
-        # TODO - For translation, this should be run second. Fix this
-        xml_to_write = parse_ncbi(sett, "fasta", email)
-        battery_writer("xml", xml_to_write, output_folder)
 
+            # TODO - For translation, this should be run second. Fix this
+            xml_to_write = parse_ncbi(sing_query, "fasta", email)
+            battery_writer("xml", xml_to_write, output_folder)
+            # time.sleep(.25)
         time.sleep(.5)
+
+    millis_after = int(round(time.time() * 1000))
+    print("Search time (sec): ", (millis_after - millis_before) / 1000)
+
+
+
 
 
 def delete_folder_contents(folder):
@@ -71,11 +81,3 @@ def delete_folder_contents(folder):
         files = glob.glob(style)
         for f in files:
             os.remove(f)
-
-
-def main():
-    print("hello from fetcher! \n Try running everything from main.py or through python3 main.py --help")
-
-
-if __name__ == "__main__":
-    main()
