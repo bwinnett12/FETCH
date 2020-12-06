@@ -156,18 +156,17 @@ def write_to_fasta(raw, output_location):
                             product_name = qual['GBQualifier_value']
 
                     # Creates a header based on what we have
-                    header = ">" + " ".join([locus, gene_name,
-                                             "-", product_name,
-                                             raw[j]["GBSeq_organism"]])
+                    species = raw[j]["GBSeq_organism"]
+                    header = ">" + locus + ":" + gene_name + ":" + species.replace(" ", "-")
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
-                    # print("Header - Key Error")
+                    print("Header - Key Error")
                     continue
 
                 # For the genes that aren't setup the same as the others
                 except IndexError:
-                    # print("Header - Index Error")
+                    print("Header - Index Error")
                     continue
 
                 try:
@@ -226,7 +225,7 @@ def write_translation_to_fasta(file, out_location, table):
             # print(TranslationError)
             continue
 
-        current_file_protein.write(record.description + "\n")
+        current_file_protein.write(">" + record.description + "\n")
 
         for n in range(0, len(sequence), 75):
             current_file_protein.write(str(sequence[n:n + 75]) + "\n")
@@ -241,10 +240,13 @@ def write_translation_to_fasta(file, out_location, table):
 def write_fasta_to_individual(file, output_folder, option, table):
     for record in SeqIO.parse(file, "fasta"):
         # IF record is empty or gene name is missing, skips it
-        if record.description.split()[1] == '-' or record.description.split()[1] == ' ' or record.seq == '':
+
+        file_split = list(filter(None, record.description.split(":")))
+
+        if len(file_split) < 3:
             continue
 
-        file_name = record.description.split()[1] + "_" + file.split("/")[-1].split(".")[0].rstrip("_full")
+        file_name = file_split[1] + "_" + file.split("/")[-1].split(".")[0].rstrip("_full")
 
         # Options based on if the option is fasta or if it needs to be translated
         if option == "fa":
