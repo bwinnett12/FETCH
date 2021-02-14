@@ -45,26 +45,33 @@ def fetch(search_query, output_folder, email):
     # I like timing things
     millis_before = int(round(time.time() * 1000))
 
-    # Staggers the fetching or else ncbi will complain
-    for i in range(0, len(search_query) - 1, 2):
-        sett = search_query[i:i + 2]
-        # We can get away with two series then a 1 second wait
-        for sing_query in sett:
-            text_to_write = parse_ncbi(sing_query, "text", email)
-            battery_writer("text", text_to_write, output_folder)
-            # time.sleep(.25)
+    if len(search_query) <= 1:
+        text_to_write = parse_ncbi(search_query, "text", email)
+        battery_writer("text", text_to_write, output_folder)
 
-            xml_to_write = parse_ncbi(sing_query, "fasta", email)
-            battery_writer("xml", xml_to_write, output_folder)
-            # time.sleep(.25)
-        time.sleep(.5)
+        xml_to_write = parse_ncbi(search_query, "fasta", email)
+        battery_writer("xml", xml_to_write, output_folder)
+
+    else:
+        # Staggers the fetching or else ncbi will complain
+        for i in range(0, len(search_query) - 1, 2):
+            sett = search_query[i:i + 2]
+            # We can get away with two series then a 1 second wait
+            for sing_query in sett:
+                text_to_write = parse_ncbi(sing_query, "text", email)
+                battery_writer("text", text_to_write, output_folder)
+                # time.sleep(.25)
+
+                xml_to_write = parse_ncbi(sing_query, "fasta", email)
+                battery_writer("xml", xml_to_write, output_folder)
+                # time.sleep(.25)
+            time.sleep(.5)
 
     millis_after = int(round(time.time() * 1000))
     print("Search time (sec): ", (millis_after - millis_before) / 1000)
 
 
 def delete_folder_contents(folder):
-    # structure = [folder + "*", folder + "*/*"]
     structure = [folder + "*/*"]
     for style in structure:
         files = glob.glob(style)
