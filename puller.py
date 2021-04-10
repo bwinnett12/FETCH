@@ -43,7 +43,7 @@ def move_individual_fasta_to(out_loc, indexes_path):
 
 
 # Pulls all of the instances of the desired gene into a single fasta
-def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
+def pull_query_to_fasta(out_loc, indexes_location, storage_location, run_mafft):
     # Gets query from lists. By default, it will be [species, gene]
     query = get_query_from_indexes(indexes_location)
 
@@ -59,11 +59,10 @@ def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
         files_array = []
 
         # Searches for all files with the name as the gene
-        for pos in glob.glob("./storage/fa/*.fa"):
+        for pos in glob.glob(storage_location.rstrip("/") + "/fa/*.fa"):
             if pos.split("_")[0].split("/")[-1].lower() == gene.lower():
                 # Adds names to a list
                 files_array.append(pos)
-
 
         for file in files_array:
             # writes the fasta into the file
@@ -90,7 +89,7 @@ def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
 
         files_array = []
 
-        for pos in glob.glob("./storage/fa/*.fa"):
+        for pos in glob.glob(storage_location + "/fa/*.fa"):
             if pos.split("_")[1].strip(".fa").lower() == species.lower():
                 # Adds names to a list
                 files_array.append(pos)
@@ -112,7 +111,6 @@ def pull_query_to_fasta(out_loc, indexes_location, run_mafft):
 
 
 # When called, makes an aligned version of the fasta just pulled
-# TODO - Mafft requires an exe location unless on UNIX. Implement cross platform support
 def align_fasta(in_file_loc):
 
     # Gets the base file *.fa

@@ -128,7 +128,7 @@ def main():
     if pull:
         print("Pulling...")
 
-        pull_query_to_fasta(location_output, location_index,
+        pull_query_to_fasta(location_output, location_index, location_storage,
                             run_mafft=mafft_args or run_mafft_config == 1 or run_mafft_config == "true")
         return
 
