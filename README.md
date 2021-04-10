@@ -24,7 +24,7 @@ python3 main.py --help
 Instead of using --help or -h, you can sub arguments to do what you need. 
 
 There are a couple of things that you can do with this project:
-1) Download genbank (.gb), genomes(.fa), and genes (.fa) to the base storage file (default is in project directory). You can do this by running with the extension **-f [Accession Number or ncbi query]**:
+1) Download genbank (.gb), genomes(.fa), and genes (.fa) to the base storage folder (default is in project directory). You can do this by running with the extension **-f [Accession Number or ncbi query]**:
 
 ```
 python3 main.py -f [ncbi query]
@@ -85,6 +85,7 @@ That command sets up a file structure at that location. You must also switch the
 
 #### TODO
 - [ ] Implement an algorithm for output of puller
+- [ ] Make resetting of indexes optional
 - [ ] Add more optional parameters within the command utility and config file
 
 - [ ] Codon align selected genes PAL2NAL

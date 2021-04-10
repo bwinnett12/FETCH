@@ -10,15 +10,14 @@ Helpers: open_clarify(reduces 4 lines to 1), check_index(Looks through the index
 
 # Adds a term to index. Either to genes.lst or species.lst
 def add_to_index(index, term, indexes_path):
-    file = open(open_clarify(index, indexes_path), "a+")
-
     # If term not there, appends to end
     if not check_index(index, term, indexes_path):
+        file = open(open_clarify(index, indexes_path), "a+")
+
         file.write(";" + term + "\n")
-    file.close()
+        file.close()
 
 
-# TODO - Make this useful
 # Deletes a term from the index. Either to genes.lst or species.lst
 # Deleting entries is harder than adding, files needs to be re-written for each entry
 def delete_from_index(index, term, indexes_path):
@@ -55,7 +54,6 @@ def check_index(index, term, indexes_path):
 
 # Sets the index back to none selected (;gene vs gene)
 # Also resets the indexes to what is found inside the storage folder
-# TODO - Stop hard-coding the path and Make reseting indexes optional
 def reset_indexes(storage_path, indexes_path):
 
     # Gets a list of all the fasta... Uses this to update the indexes with whats found
@@ -88,7 +86,11 @@ def reset_indexes(storage_path, indexes_path):
 
         # Saves full_list to replace index
         for entry in full_list:
-            add_to_index(index, entry, indexes_path)
+            entry = entry.rstrip("_full")  # Catch for species on "full_fa"
+            if os.name == "nt":
+                add_to_index(index, entry.split('\\')[-1], indexes_path)
+            else:
+                add_to_index(index, entry, indexes_path)
 
         # Saves lines of index to be then added back in later unchecked (with ;)
         file = open(open_clarify(index, indexes_path), "r")
@@ -98,7 +100,6 @@ def reset_indexes(storage_path, indexes_path):
         file = open(open_clarify(index, indexes_path), "w")
 
         # Adds a semicolon if there isn't a semicolon
-        # TODO - Make this optional. Might stink to do after specifying many genes
         for line in lines:
             if line[0] == ";":
                 file.write(line)
@@ -173,13 +174,12 @@ def ensure_folder_scheme(path):
         os.makedirs(path.rstrip("/") + folder, exist_ok=True)
 
 
-# TODO - this to not be hardcoded
 # A helper method for simplifying all of the other methods
 def open_clarify(index, index_path):
     if index.lower() == "species":
-        return "./indexes/species.lst"
+        return index_path.rstrip("/") + "/species.lst"
     elif index.lower() == "genes":
-        return "./indexes/genes.lst"
+        return index_path.rstrip("/") + "/genes.lst"
     else:
         return False
 

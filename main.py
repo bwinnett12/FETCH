@@ -68,8 +68,7 @@ def main():
     # Testing output
     output = "Output: \n"
 
-
-    # THis is the part where we are reading from the config
+    # This is the part where we are reading from the config
     config = configparser.ConfigParser()
     config.read('ncbifetcher.config')
 

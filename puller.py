@@ -8,7 +8,7 @@ from Bio.Align.Applications import MafftCommandline
 from indexer import get_query_from_indexes
 
 
-# Pulls all of the fastas from the query into a folder
+# Pulls all of the fastas from the query into an output folder
 def move_individual_fasta_to(out_loc, indexes_path):
     query = get_query_from_indexes(indexes_path)
 
