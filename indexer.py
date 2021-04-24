@@ -174,7 +174,7 @@ def ensure_folder_scheme(path):
         os.makedirs(path.rstrip("/") + folder, exist_ok=True)
 
 
-# A helper method for simplifying all of the other methods
+# A helper method for simplifying all of the other methods using general indexes
 def open_clarify(index, index_path):
     if index.lower() == "species":
         return index_path.rstrip("/") + "/species.lst"
@@ -182,4 +182,25 @@ def open_clarify(index, index_path):
         return index_path.rstrip("/") + "/genes.lst"
     else:
         return False
+
+
+# A helper method for simplifying individual indexes
+def open_clarify_specific(record, index, index_path):
+
+    if index.lower() == "species":
+        # In case of a new gene or species, then creates a new file
+        record_index = index_path.rstrip("/") + "/species/" + record + ".lst"
+        if not os.path.isfile(record_index):
+            current_file = open(record_index, "x")
+        return record_index
+
+    elif index.lower() == "genes":
+        # In case of a new gene or species, then creates a new file
+        record_index = index_path.rstrip("/") + "/genes/" + record + ".lst"
+        if not os.path.isfile(record_index):
+            current_file = open(record_index, "x")
+        return record_index
+    else:
+        return False
+
 
