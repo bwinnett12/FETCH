@@ -4,7 +4,7 @@ import os
 
 from fetcher import fetch, delete_folder_contents
 from puller import pull_query_to_fasta
-from indexer import reset_indexes, ensure_folder_scheme
+from indexer import reset_indexes, ensure_folder_scheme_storage
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
                         dest='delete',
                         default=False,
                         action='store_true',
-                        help="delete current storage [only for testing purposes]")
+                        help="delete current storage")
 
     # Argument for fetching.
     parser.add_argument('-f', '--fetch',
@@ -118,7 +118,7 @@ def main():
 
     # This is a way to sort the indexes
     if index:
-        print("Reseting indexes...")
+        print("Resetting indexes...")
         output += "Index: \n"
 
         reset_indexes(location_storage, location_index)
@@ -135,7 +135,7 @@ def main():
     # For setting up a file structure at a location other than default
     if len(setup_structure) >= 1:
         print("Setting up structure at " + setup_structure + "...")
-        ensure_folder_scheme(setup_structure)
+        ensure_folder_scheme_storage(setup_structure)
         return
 
 

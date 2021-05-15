@@ -7,7 +7,7 @@ import time
 
 from Bio import Entrez
 from writer import battery_writer
-from indexer import ensure_folder_scheme
+from indexer import ensure_folder_scheme_storage
 
 
 # Parses the genebank and fetches what the user inputs
@@ -39,7 +39,7 @@ def parse_ncbi(query_from_user, output_type, email):
 # Something to run to run both functions. Ultimately will be done using R (Front End)
 def fetch(search_query, output_folder, email):
     # In case the storage is gone for some reason
-    ensure_folder_scheme(output_folder)
+    ensure_folder_scheme_storage(output_folder)
     search_query = search_query.split(',')
 
     # I like timing things
@@ -71,6 +71,7 @@ def fetch(search_query, output_folder, email):
     print("Search time (sec): ", (millis_after - millis_before) / 1000)
 
 
+# If you want to start fresh with your storage contents
 def delete_folder_contents(folder):
     structure = [folder + "*/*"]
     for style in structure:
