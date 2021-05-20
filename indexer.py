@@ -118,6 +118,7 @@ def reset_indexes(storage_path, indexes_path):
         # Refreshes to organize and sort it again
         refresh("master", index, indexes_path)
     fill_gene_indexes(indexes_path, storage_path)
+    fill_species_indexes(indexes_path, storage_path)
 
 
 # Does normalization on lists
@@ -193,7 +194,7 @@ def fill_gene_indexes(indexes_path, storage_path):
         species_list = []  # Resets for the next gene
 
 
-
+# Updates species indexes
 def fill_species_indexes(indexes_path, storage_path):
     def get_file_list(path):   # Returns a list of all file available in storage
         path = path.rstrip("/")
