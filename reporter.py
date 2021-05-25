@@ -8,7 +8,7 @@ import os
 # Makes a file for presence or absence of genes
 def generate_gene_matrix(reports_path, indexes_path):
 
-    file_matrix_loc = reports_path.rstrip("/") + "/gene.matrix"
+    file_matrix_loc = reports_path.rstrip("/") + "/genes.csv"
 
     # Makes a file if not present if not opens a new one
     if not os.path.isfile(file_matrix_loc):
@@ -16,8 +16,8 @@ def generate_gene_matrix(reports_path, indexes_path):
     file_matrix = open(file_matrix_loc, "w")
 
     try:
-        file_genes = open(indexes_path.rstrip("/" + "/genes.lst")).readlines()
-        file_species = open(indexes_path.rstrip("/" + "/species.lst")).readlines()
+        file_genes = open(indexes_path.rstrip("/") + "/genes.lst").readlines()
+        file_species = open(indexes_path.rstrip("/") + "/species.lst").readlines()
     except FileNotFoundError:
         print("'genes or species.lst' not found. Indexes are not properly set up or config file has a typo")
         quit()
@@ -36,6 +36,8 @@ def generate_gene_matrix(reports_path, indexes_path):
     for species in file_species:
         species = species.lstrip(";").rstrip("\n")
         perfect_dict[species] = gene_dict
+
+    r = 2
 
     # Go through each species index and go line by line through each index
     # If the gene is present, change that element in the dictionary to a "1"
@@ -57,4 +59,4 @@ def generate_gene_matrix(reports_path, indexes_path):
 if __name__ == '__main__':
     reports_path = "./reports/"
     indexes_path = "./indexes/"
-    generate_gene_matrix()
+    generate_gene_matrix(reports_path, indexes_path)

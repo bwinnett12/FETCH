@@ -8,16 +8,6 @@ Helpers: open_clarify(reduces 4 lines to 1), check_index(Looks through the index
 """
 
 
-# Adds a term to index. Either to genes.lst or species.lst
-def add_to_index(term, index, indexes_path):
-    # If term not there, appends to end
-    if not check_index(term, index, "master", indexes_path):
-        file = open(open_clarify("master", index, indexes_path), "a+")
-
-        file.write(";" + term + "\n")
-        file.close()
-
-
 # Deletes a term from the index. Either to genes.lst or species.lst
 # Deleting entries is harder than adding, files needs to be re-written for each entry
 def delete_from_index(term, index, index_type, indexes_path):
@@ -34,30 +24,6 @@ def delete_from_index(term, index, index_type, indexes_path):
     for line in lines:
         if term not in line:
             file.write(line)
-
-    file.close()
-
-
-# Function that cycles through the .lst to see if the term is there
-# Helper just for saving time
-def check_index(term, index, index_type, indexes_path):
-
-    file = open(open_clarify(index, index_type, indexes_path), "r")
-
-    for line in file.readlines():
-        # if line == (term + "\n") or line == (";" + term + "\n") or line == term or line == (";" + term):
-        if term.lower() in line:
-            file.close()
-            return True
-    file.close()
-    return False
-
-
-def check_index_single(term, lines):
-    for line in lines:
-        if term.lower() in line:
-            return True
-    return False
 
 
 # Sets the index back to none selected (;gene vs gene)
@@ -90,15 +56,14 @@ def reset_indexes(storage_path, indexes_path):
         full_list = get_file_list(index, storage_path)
 
         file = open(open_clarify("master", index, indexes_path), "w")
-        file.close()
 
         # Saves full_list to replace index
         for entry in full_list:
             entry = entry.rstrip("_full")  # Catch for species on "full_fa"
             if os.name == "nt":
-                add_to_index(entry.split('\\')[-1], index, indexes_path)
+                file.write(";" + entry.split('\\')[-1] + "\n")
             else:
-                add_to_index(entry, index, indexes_path)
+                file.write(";" + entry + "\n")
 
         # Saves lines of index to be then added back in later unchecked (with ;)
         file = open(open_clarify("master", index, indexes_path), "r")
