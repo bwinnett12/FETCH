@@ -5,6 +5,7 @@ import os
 from fetcher import fetch, delete_folder_contents
 from puller import pull_query_to_fasta
 from indexer import reset_indexes, ensure_folder_scheme_storage
+from reporter import generate_reports
 
 
 def main():
@@ -45,6 +46,13 @@ def main():
                         help="Pull from storage. "
                              "The genes and species specified are specified in genes.lst and species.lst.")
 
+    parser.add_argument('-r', '--report',
+                        dest='report',
+                        default=False,
+                        action='store_true',
+                        help="Report. Generate a report "
+                             "All reports go to the /reports/ folder unless specified differently.")
+
     parser.add_argument('-s', '--setup',
                         dest='setup_structure',
                         default="",
@@ -63,6 +71,7 @@ def main():
 
     mafft_args = args.mafft
     pull = args.pull
+    report = args.report
     setup_structure = args.setup_structure
 
     # Testing output
@@ -74,8 +83,9 @@ def main():
 
     email = config['OPTIONS']['email']
     location_index = config['INDEX']['index_location']
-    location_storage = config['STORAGE']['storage_location']
     location_output = config['OUTPUT']['output_location']
+    location_reports = config['REPORTS']['reports_location']
+    location_storage = config['STORAGE']['storage_location']
 
     reset_indexes_default = config['OPTIONS']['reset_indexes_everytime']
     run_mafft_config = config['OPTIONS']['run_mafft_everytime']
@@ -137,6 +147,12 @@ def main():
         print("Setting up structure at " + setup_structure + "...")
         ensure_folder_scheme_storage(setup_structure)
         return
+
+    if report:
+        print("Reporting...")
+        generate_reports(location_reports, location_index)
+        return
+
 
 
 if __name__ == "__main__":
