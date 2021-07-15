@@ -8,11 +8,81 @@ import os, csv
 # A blanket statement to generate each arm of the report. Chain called from running main (-r)
 def generate_reports(reports_path, indexes_path):
     generate_gene_matrix(reports_path, indexes_path)
+    generate_storage_report(reports_path)
+
+
+# Generates a document that contains a statistics about your whole storage
+def generate_storage_report(reports_path):
+    # Compartmentalizing the writing of the report for readability - Returns a string that can be written at once
+    def write_gene_presence():
+        out_string = "Gene presence by percentage:\n"  # Initialized string with starting message
+
+        for key, value in perfect_dict.items():
+            out_string += key + ": " + "{:.1%}".format(sum(value) / len(value)) + "%\n"  # Each line is a gene + %
+        return out_string + "\n"
+
+    # Compartmentalizing the writing of the report for readability - Returns a string that can be written at once
+    def write_gene_presence_species():
+
+        out_string = "Gene presence by percentage (per species):\n"  # Initialized string with starting message
+        i = 0  # Value for keeping track of the moving array
+
+        for species in field:
+            count = 0  # Roving amount of possible genes present (reset for each species)
+            total = 0  # Roving amount of total genes present (reset for each species)
+
+            for value in perfect_dict.values():  # Iterates through each gene and determines presence
+                count += 1  # Increments count
+                total += value[i]  # Increments count only if presence
+
+            out_string += species + ": " + "{:.1%}".format(total / count) + "%\n"  # Each line is gene + %
+            i += 1  # Moves up species to next column (How the dictionaries are setup
+
+        return out_string + "\n"
+
+
+    gene_matrix = ""
+    try:
+        gene_matrix = csv.reader(open(reports_path.rstrip("/") + "/genes_matrix.csv", "r"), delimiter=',')
+    except FileNotFoundError:
+        print("'genes or species.lst' not found. Indexes are not properly set up or config file has a typo")
+        quit()
+
+    # if len(gene_matrix) == 0:   # TODO - Make a catch for broken gene matrices
+    #     print("Gene matrix is empty... Try fetching something!")
+
+    field = next(gene_matrix)
+    field.pop(0)  # Removes the "genes" from the csv
+    perfect_dict = {}  # A dictionary to contain what is on the csv
+
+    for row in gene_matrix:  # Iterates through each row of the csv and adds to a dictionary
+        gene = row[0]
+        row.pop(0)
+        perfect_dict[gene] = list(map(int, row))
+
+    file_txt_loc = reports_path.rstrip("/") + "/FETCH_report.txt"  # A variable for saving the report to
+
+    # Deletes if a file is present
+    if os.path.isfile(file_txt_loc):
+        os.remove(file_txt_loc)
+    file_txt = open(file_txt_loc, "w")
+
+    # This section represents the header for the text file
+    file_txt.write("~~~~~~~~~~~ BEGIN REPORT ~~~~~~~~~~~\n\n"
+                   "This is the FETCH report. The information detailed in here represents what is contained\n"
+                   "within your genomes that you have fetched. Information will be broken down by section,\n"
+                   "with an Rshiny accompaniment to come. If there is any other diagnostics that you would\n"
+                   "like to see added, please write to the authors via email or directly to github.\n"
+                   "\n")
+
+    file_txt.write(write_gene_presence())  # Writes gene presence for individual genes
+    file_txt.write(write_gene_presence_species())  # Writes gene presence for individual genes
+
+    file_txt.write("~~~~~~~~~~~ END REPORT ~~~~~~~~~~~")
 
 
 # Makes a file for presence or absence of genes
 def generate_gene_matrix(reports_path, indexes_path):
-
     file_genes = file_species = 0
     try:
         file_genes = open(indexes_path.rstrip("/") + "/genes.lst").readlines()
@@ -20,6 +90,11 @@ def generate_gene_matrix(reports_path, indexes_path):
     except FileNotFoundError:
         print("'genes or species.lst' not found. Indexes are not properly set up or config file has a typo")
         print("Try resetting indexes with '-i' or if storage is empty; fetch something!")
+        quit()
+
+    # JUst in case the indexes are empty (nothing has been fetched)
+    if len(file_genes) == 0 or len(file_species) == 0:
+        print("Indexes (and therefore storages are empty), try fetching something")
         quit()
 
     # Constructs a dictionary to hold data. Each entry will be a species and then a nest of each gene
@@ -49,8 +124,7 @@ def generate_gene_matrix(reports_path, indexes_path):
         for gene in species_specific:
             species[1][gene] = "1"
 
-
-    file_csv_loc = reports_path.rstrip("/") + "/genes.csv"  # A variable for saving the report to
+    file_csv_loc = reports_path.rstrip("/") + "/genes_matrix.csv"  # A variable for saving the report to
 
     # Deletes if a file is present
     if os.path.isfile(file_csv_loc):
@@ -58,7 +132,7 @@ def generate_gene_matrix(reports_path, indexes_path):
     file_csv = open(file_csv_loc, "w")
 
     csv_writer = csv.writer(file_csv)  # Generic name, but only one writer
-    species_row, values = zip(*perfect_dict.items())    # Splits the dict into a keys for the first row
+    species_row, values = zip(*perfect_dict.items())  # Splits the dict into a keys for the first row
     species_row = list(species_row)
     species_row.insert(0, "genes")
     csv_writer.writerow(species_row)  # Top shelf
@@ -72,12 +146,4 @@ def generate_gene_matrix(reports_path, indexes_path):
         for species in total_values:  # Iterates through each species
             current_line.append(species[gene])  # Adds the 1 or 0 representing presence
 
-        csv_writer.writerow(current_line) # Writes that line
-
-
-
-if __name__ == '__main__':
-    reports_path = "./reports/"
-    indexes_path = "./indexes/"
-    # generate_gene_matrix(reports_path, indexes_path)
-    generate_reports(reports_path, indexes_path)
+        csv_writer.writerow(current_line)  # Writes that line
