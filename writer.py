@@ -262,7 +262,7 @@ def write_fasta_to_individual(file, output_folder, option, table):
         current_file = open(out_loc, "w")
 
         # Writes the header first
-        current_file.write("> " + record.description + "\n")
+        current_file.write(">" + record.description + "\n")
 
         # if .faa, translates sequence. Else keeps previous
         try:

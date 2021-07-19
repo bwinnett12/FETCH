@@ -1,5 +1,6 @@
 import configparser
 import argparse
+import glob
 import os
 
 from fetcher import fetch, delete_folder_contents
@@ -154,6 +155,16 @@ def main():
         return
 
 
+def delete():
+
+
+    # If you want to start fresh with your storage contents
+    def delete_folder_contents(folder):
+        structure = [folder + "*/*"]
+        for style in structure:
+            files = glob.glob(style)
+            for f in files:
+                os.remove(f)
 
 if __name__ == "__main__":
     main()
