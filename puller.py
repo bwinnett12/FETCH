@@ -6,6 +6,7 @@ from Bio import SeqIO
 from Bio.Align.Applications import MafftCommandline
 
 from indexer import get_query_from_indexes
+from tool_helper import align_fasta
 
 
 # Pulls all of the fastas from the query into an output folder
@@ -108,18 +109,3 @@ def pull_query_to_fasta(out_loc, indexes_location, storage_location, run_mafft):
         # boolean parameter to run mafft
         if run_mafft:
             align_fasta(out_loc_file)
-
-
-# When called, makes an aligned version of the fasta just pulled
-def align_fasta(in_file_loc):
-
-    # Gets the base file *.fa
-    out_file_base = in_file_loc.split(".fa")[0] + ".aln"
-
-    # Runs command line to work with mafft
-    mafft_cline = MafftCommandline(input=in_file_loc)
-
-    # runs mafft using what our file was and to an output of base.aln
-    stdout, stderr = mafft_cline()
-    with open(out_file_base, "w") as handle:
-        handle.write(stdout)

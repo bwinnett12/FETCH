@@ -7,6 +7,7 @@ from fetcher import fetch, delete_folder_contents
 from puller import pull_query_to_fasta
 from indexer import reset_indexes, ensure_folder_scheme_storage
 from reporter import generate_reports
+from tool_helper import tool_fasttree
 
 
 def main():
@@ -20,26 +21,28 @@ def main():
                         action='store_true',
                         help="delete current storage")
 
-    # Argument for fetching.
+    # Argument for fetching
     parser.add_argument('-f', '--fetch',
                         dest='fetch',
                         default="",
                         help='Fetches from ncbi and adds to storage: \n '
                              'Usage: -f [Accession number or boolean operators]')
 
+    # Argument for resetting indexes
     parser.add_argument('-i', '--index',
                         dest='index',
                         action='store_true',
                         help='Resets the indexes. This can be done manually through this method or specified to do it'
                              ' everytime from the configs.')
 
+    # Argument for running mafft on aligned files
     parser.add_argument('-m', '--mafft',
                         dest='mafft',
                         default=False,
                         action='store_true',
                         help="Runs mafft when pulling. Optional alignment but requires -p or --pull to be effective. "
                              "Can also be specified to run automatically in config")
-
+    # Argument for pulling files from storage
     parser.add_argument('-p', '--pull',
                         dest='pull',
                         default=False,
@@ -47,13 +50,14 @@ def main():
                         help="Pull from storage. "
                              "The genes and species specified are specified in genes.lst and species.lst.")
 
+    # Argument for running the report
     parser.add_argument('-r', '--report',
                         dest='report',
                         default=False,
                         action='store_true',
-                        help="Report. Generate a report "
-                             "All reports go to the /reports/ folder unless specified differently.")
+                        help="Report. Generate all report")
 
+    # Set up a structure at desired location
     parser.add_argument('-s', '--setup',
                         dest='setup_structure',
                         default="",
@@ -62,18 +66,26 @@ def main():
                                                               "This should be done when moving storage to a location "
                                                               "outside of the cloned folder.")
 
+    # Argument for fasttree
+    parser.add_argument('-t', '--tree',
+                        dest='fasttree',
+                        default=False,
+                        action='store_true',
+                        help="Runs FastTree on aligned folders in storage.\n"
+                             "Make sure to run mafft option first and to specify FastTree location in config "
+                             "(Even if on path).")
+
     # This stores all of the values from the parser
     args = parser.parse_args()
 
     delete = args.delete
-
     query_fetch = args.fetch
     index = args.index
-
     mafft_args = args.mafft
     pull = args.pull
     report = args.report
     setup_structure = args.setup_structure
+    fasttree = args.fasttree
 
     # Testing output
     output = "Output: \n"
@@ -89,7 +101,12 @@ def main():
     location_storage = config['STORAGE']['storage_location']
 
     reset_indexes_default = config['OPTIONS']['reset_indexes_everytime']
-    run_mafft_config = config['OPTIONS']['run_mafft_everytime']
+
+    # Tools options
+    tools_run_mafft_config = config['TOOLS']['run_mafft_everytime']
+    tools_fasttree_path = config['TOOLS']["fasttree_path"]
+    tools_fasttree_generate_error_log = config['TOOLS']["fasttree_generate_error_log"]
+
 
     # Testing: Deletes everything in the folders and resets the indexes
     if delete:
@@ -140,7 +157,7 @@ def main():
         print("Pulling...")
 
         pull_query_to_fasta(location_output, location_index, location_storage,
-                            run_mafft=mafft_args or run_mafft_config == 1 or run_mafft_config == "true")
+                            run_mafft=mafft_args or tools_run_mafft_config == 1 or tools_run_mafft_config == "true")
         return
 
     # For setting up a file structure at a location other than default
@@ -149,15 +166,21 @@ def main():
         ensure_folder_scheme_storage(setup_structure)
         return
 
+    # For running the report
     if report:
         print("Reporting...")
         generate_reports(location_reports, location_index)
         return
 
+    if fasttree:
+        print("Running Fasttree...")
+        generate_error_log = False if int(tools_fasttree_generate_error_log) == 0 else True
+        tool_fasttree(location_output, tools_fasttree_path, generate_error_log)
+        return
+
+
 
 def delete():
-
-
     # If you want to start fresh with your storage contents
     def delete_folder_contents(folder):
         structure = [folder + "*/*"]
@@ -165,6 +188,7 @@ def delete():
             files = glob.glob(style)
             for f in files:
                 os.remove(f)
+
 
 if __name__ == "__main__":
     main()
