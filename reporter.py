@@ -2,17 +2,18 @@ __author__ = "Bill Winnett"
 __email__ = "bwinnett12@gmail.com"
 
 # In this file, reports such as statistics, matrix representations, and other portrayals of the storage are represented
+import glob
 import os, csv
 
 
 # A blanket statement to generate each arm of the report. Chain called from running main (-r)
 def generate_reports(reports_path, indexes_path):
     generate_gene_matrix(reports_path, indexes_path)
-    generate_storage_report(reports_path)
+    generate_storage_report(reports_path, indexes_path)
 
 
 # Generates a document that contains a statistics about your whole storage
-def generate_storage_report(reports_path):
+def generate_storage_report(reports_path, indexes_path):
     # Compartmentalizing the writing of the report for readability - Returns a string that can be written at once
     def write_gene_presence():
         out_string = "Gene presence by percentage:\n"  # Initialized string with starting message
@@ -39,6 +40,95 @@ def generate_storage_report(reports_path):
             i += 1  # Moves up species to next column (How the dictionaries are setup
 
         return out_string + "\n"
+
+    # Compartmentalizing the writing of the report
+    # This adds what genes were missing from each species
+    def write_missing_genes():
+        out_string = "Genes missing by species:\n"
+
+        # Making a dictionary out of the genes.lst
+        all_gene = open(indexes_path.rstrip("/") + "/genes.lst", "r").readlines()
+        all_gene = [x.lstrip(";").rstrip("\n") for x in all_gene]
+        dict_gene = {}
+
+        # Fill dictionary with 0s representing not present
+        for single_gene in all_gene:
+            dict_gene[single_gene] = 0
+
+        dict_gene = dict(sorted(dict_gene.items()))
+
+        # Iterate through species possible
+        for species in sorted(glob.glob(indexes_path.rstrip("/") + "/species/*.lst")):
+            species_name = species.split("/")[-1].replace(".lst", "").replace("-", " ")
+
+            # Copy so not to interupt original values
+            dict_temp = dict_gene.copy()
+
+            # A list of what genes are contained per species
+            species_lines = open(species, "r").readlines()
+            species_lines = [x.lstrip(";").rstrip("\n") for x in species_lines]
+
+            # If gene is present, add it. Anything not added is considered not there
+            for gene in species_lines:
+                dict_temp[gene] = 1
+
+            # If there is nothing missing, skips writing
+            if 0 in dict_temp.values():
+                out_string += species_name + ":\n"
+
+                # Time to create a string from the dictionary
+                for key, value in dict_temp.items():
+                    if value == 0:
+                        out_string += key + "\n"
+
+                out_string += "\n"
+
+        return out_string
+
+    # Compartmentalizing the writing of the report
+    # This adds what species were missing from each gene
+    def write_missing_genes_by_species():
+        out_string = "Species missing by gene:\n"
+
+        # Making a dictionary out of the species.lst
+        all_species = open(indexes_path.rstrip("/") + "/species.lst", "r").readlines()
+        all_species = [x.lstrip(";").rstrip("\n") for x in all_species]
+        dict_species = {}
+
+        # Fill dictionary with 0s representing not present
+        for single_species in all_species:
+            dict_species[single_species] = 0
+
+        # Alphabetically sorts the list
+        dict_species = dict(sorted(dict_species.items()))
+
+        # Iterate through every possible gene
+        for gene in sorted(glob.glob(indexes_path.rstrip("/") + "/genes/*.lst")):
+            gene_name = gene.split("/")[-1].rstrip(".lst")
+
+            dict_temp = dict_species.copy()
+
+            gene_lines = open(gene, "r").readlines()
+            gene_lines = [x.lstrip(";").rstrip("\n") for x in gene_lines]
+
+            # If species is present, add it. Anything not added is considered not there
+            for species in gene_lines:
+                dict_temp[species] = 1
+
+            # If nothing missing, nothing to report
+            if 0 in dict_temp.values():
+                out_string += gene_name + ":\n"
+
+                # Time to create a string from the dictionary
+                for key, value in dict_temp.items():
+                    if value == 0:
+                        out_string += key + "\n"
+
+                out_string += "\n"
+            else:
+                continue
+
+        return out_string
 
 
     gene_matrix = ""
@@ -76,7 +166,15 @@ def generate_storage_report(reports_path):
                    "\n")
 
     file_txt.write(write_gene_presence())  # Writes gene presence for individual genes
+    file_txt.write("*********\n")
+
     file_txt.write(write_gene_presence_species())  # Writes gene presence for individual genes
+    file_txt.write("*********\n")
+
+    file_txt.write(write_missing_genes())
+    file_txt.write("********\n")
+
+    file_txt.write(write_missing_genes_by_species())
 
     file_txt.write("~~~~~~~~~~~ END REPORT ~~~~~~~~~~~")
 
