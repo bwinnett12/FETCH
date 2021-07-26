@@ -16,7 +16,6 @@ setup(name='ncbifetcher',
       install_requires=[
             'markdown',
             'biopython',
-            'glob3',
             'argparse',
             'Bio',
       ],
