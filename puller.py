@@ -6,7 +6,7 @@ from Bio import SeqIO
 from Bio.Align.Applications import MafftCommandline
 
 from indexer import get_query_from_indexes
-from tool_helper import align_fasta
+from tool_helper import tool_mafft
 
 
 # Pulls all of the fastas from the query into an output folder
@@ -78,7 +78,7 @@ def pull_query_to_fasta(out_loc, indexes_location, storage_location, run_mafft):
 
         # boolean parameter to run mafft
         if run_mafft:
-            align_fasta(out_loc_file)
+            tool_mafft(out_loc_file)
 
     for species in query[0]:
         out_loc_file = out_loc + species + ".fa"
@@ -108,4 +108,4 @@ def pull_query_to_fasta(out_loc, indexes_location, storage_location, run_mafft):
 
         # boolean parameter to run mafft
         if run_mafft:
-            align_fasta(out_loc_file)
+            tool_mafft(out_loc_file)

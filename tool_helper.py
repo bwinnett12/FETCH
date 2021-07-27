@@ -16,7 +16,7 @@ RAxML, PAL2NAL
 
 # When called, makes an aligned version of the fasta just pulled
 # Uses the tool mafft
-def align_fasta(in_file_loc):
+def tool_mafft(in_file_loc):
 
     # Gets the base file *.fa
     out_file_base = in_file_loc.split(".fa")[0] + ".aln"

@@ -3,14 +3,16 @@ import argparse
 import glob
 import os
 
-from fetcher import fetch, delete_folder_contents
+from fetcher import fetch
 from puller import pull_query_to_fasta
-from indexer import reset_indexes, ensure_folder_scheme_storage
+from indexer import reset_indexes, ensure_folder_scheme_storage, ensure_folder_scheme_indexes
 from reporter import generate_reports
-from tool_helper import tool_fasttree
+from tool_helper import tool_fasttree, tool_mafft
+
 
 
 def main():
+
     # Part where argparser figures out your command
     parser = argparse.ArgumentParser(description='Parse NCBI and then work with Biological data')
 
@@ -19,7 +21,7 @@ def main():
                         dest='delete',
                         default=False,
                         action='store_true',
-                        help="delete current storage")
+                        help="Delete current storage along with output, reports, and indexes.")
 
     # Argument for fetching
     parser.add_argument('-f', '--fetch',
@@ -42,6 +44,7 @@ def main():
                         action='store_true',
                         help="Runs mafft when pulling. Optional alignment but requires -p or --pull to be effective. "
                              "Can also be specified to run automatically in config")
+
     # Argument for pulling files from storage
     parser.add_argument('-p', '--pull',
                         dest='pull',
@@ -60,11 +63,14 @@ def main():
     # Set up a structure at desired location
     parser.add_argument('-s', '--setup',
                         dest='setup_structure',
-                        default="",
-                        help="Usage: -s [storage location]" + "\n"
-                                                              " Sets up a default structure for storage and indexes."
-                                                              "This should be done when moving storage to a location "
-                                                              "outside of the cloned folder.")
+                        default=False,
+                        action='store_true',
+                        help="Usage [s] " + "\n"
+                                            "Sets up a default structure at locations specified in config."
+                                            "Do this before anything else to ensure that everything is set up properly."
+                                            "This should be done if moving any component to a different"
+                                            "location outside of FETCH folder. No other modifiers necessary")
+
 
     # Argument for fasttree
     parser.add_argument('-t', '--tree',
@@ -110,9 +116,12 @@ def main():
 
     # Testing: Deletes everything in the folders and resets the indexes
     if delete:
-        print("deleting... \n")
+        print("Deleting... \n")
+
         delete_folder_contents(location_storage)
         delete_folder_contents(location_output)
+        delete_folder_contents(location_reports)
+        delete_folder_contents(location_index)
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
@@ -160,10 +169,27 @@ def main():
                             run_mafft=mafft_args or tools_run_mafft_config == 1 or tools_run_mafft_config == "true")
         return
 
+    # For running mafft alone
+    if mafft_args and not pull:
+        print("Running mafft...")
+        for file in glob.glob(location_output.rstrip("/") + "/*.fa"):
+            tool_mafft(file)
+
     # For setting up a file structure at a location other than default
-    if len(setup_structure) >= 1:
-        print("Setting up structure at " + setup_structure + "...")
-        ensure_folder_scheme_storage(setup_structure)
+    if setup_structure:
+        print("Setting up structure at : ")
+        ensure_folder_scheme_storage(location_storage)
+        print("Storage: " + location_storage)
+
+        ensure_folder_scheme_indexes(location_index)
+        print("Indexes: " + location_index)
+
+        os.makedirs(location_output, exist_ok=True)
+        print("Output: " + location_output)
+
+        os.makedirs(location_reports, exist_ok=True)
+        print("Reports: " + location_reports)
+
         return
 
     # For running the report
@@ -179,13 +205,15 @@ def main():
         return
 
 
-
-def delete():
-    # If you want to start fresh with your storage contents
-    def delete_folder_contents(folder):
-        structure = [folder + "*/*"]
-        for style in structure:
+# If you want to start fresh with your storage contents
+def delete_folder_contents(folder):
+    structure = [[folder + "*/*"], [folder + "*"]]
+    for type in structure:
+        for style in type:
             files = glob.glob(style)
+            files = [file for file in files if os.path.isfile(file) and
+                     "genes.lst" not in file and "species.lst" not in file]
+
             for f in files:
                 os.remove(f)
 

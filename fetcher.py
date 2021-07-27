@@ -69,12 +69,3 @@ def fetch(search_query, output_folder, email):
 
     millis_after = int(round(time.time() * 1000))
     print("Search time (sec): ", (millis_after - millis_before) / 1000)
-
-
-# If you want to start fresh with your storage contents
-def delete_folder_contents(folder):
-    structure = [folder + "*/*"]
-    for style in structure:
-        files = glob.glob(style)
-        for f in files:
-            os.remove(f)

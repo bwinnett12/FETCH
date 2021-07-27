@@ -230,12 +230,12 @@ def ensure_folder_scheme_indexes(path):
         os.makedirs(path.rstrip("/") + folder, exist_ok=True)
 
     # To ensure genes.lst is present
-    if not os.path.isfile(path.rstrip("/") + "genes.lst"):
-        current_file = open(path.rstrip("/") + "genes.lst", "x")
+    if not os.path.isfile(path.rstrip("/") + "/genes.lst"):
+        current_file = open(path.rstrip("/") + "/genes.lst", "x")
 
     # To ensure species.lst is present
-    if not os.path.isfile(path.rstrip("/") + "species.lst"):
-        current_file = open(path.rstrip("/") + "species.lst", "x")
+    if not os.path.isfile(path.rstrip("/") + "/species.lst"):
+        current_file = open(path.rstrip("/") + "/species.lst", "x")
 
 
 # A helper method for simplifying individual indexes

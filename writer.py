@@ -76,9 +76,6 @@ def write_to_gb(raw_data, output_folder):
             current_file.write(raw_data)
             current_file.close()
 
-            # Adds to index
-            # add_to_index("species", organism_name.capitalize(), FIX_Indexes_OATH)
-
             # Piggy backs genome writing to here
             write_genome(gb_location, output_folder)
 
@@ -155,13 +152,16 @@ def write_to_fasta(raw, output_location):
                         if qual['GBQualifier_name'] == 'note':
                             product_name = qual['GBQualifier_value']
 
+                    listed_descriptor = gene_name if gene_name.strip() != "" else product_name
+
                     # Creates a header based on what we have
                     species = raw[j]["GBSeq_organism"]
-                    header = ">" + locus + ":" + gene_name + ":" + species.replace(" ", "-")
+                    header = ">" + locus + ":" + listed_descriptor.replace(" ", "-") + ":" + species.replace(" ", "-")
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
                     print("Header - Key Error")
+                    print(feature['GBFeature_key'])
                     continue
 
                 # For the genes that aren't setup the same as the others
