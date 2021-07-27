@@ -1,0 +1,186 @@
+~~~~~~~~~~~ BEGIN REPORT ~~~~~~~~~~~
+
+This is the FETCH report. The information detailed in here represents what is contained
+within your genomes that you have fetched. Information will be broken down by section,
+with an Rshiny accompaniment to come. If there is any other diagnostics that you would
+like to see added, please write to the authors via email or directly to github.
+
+Gene presence by percentage:
+12S-ribosomal-RNA: 100.0%%
+16S-ribosomal-RNA: 100.0%%
+ATP6: 100.0%%
+ATP8: 100.0%%
+CO1: 50.0%%
+CO2: 50.0%%
+CO3: 50.0%%
+COX1: 50.0%%
+COX2: 50.0%%
+COX3: 50.0%%
+CYTB: 50.0%%
+L-strand-repeat-origin: 50.0%%
+NADH5: 50.0%%
+NADH6: 50.0%%
+ND1: 100.0%%
+ND2: 100.0%%
+ND3: 100.0%%
+ND4: 100.0%%
+ND4L: 100.0%%
+ND5: 50.0%%
+ND6: 50.0%%
+cytb: 50.0%%
+oriL: 50.0%%
+tRNA-Ala: 100.0%%
+tRNA-Arg: 100.0%%
+tRNA-Asn: 100.0%%
+tRNA-Asp: 100.0%%
+tRNA-Cys: 100.0%%
+tRNA-G: 0.0%%
+tRNA-Gln: 100.0%%
+tRNA-Gly: 100.0%%
+tRNA-His: 100.0%%
+tRNA-Ile: 100.0%%
+tRNA-Le: 0.0%%
+tRNA-Lys: 100.0%%
+tRNA-Met: 100.0%%
+tRNA-Phe: 100.0%%
+tRNA-Pro: 100.0%%
+tRNA-Ser: 100.0%%
+tRNA-Thr: 100.0%%
+tRNA-Trp: 100.0%%
+tRNA-Tyr: 100.0%%
+tRNA-Va: 0.0%%
+
+*********
+Gene presence by percentage (per species):
+Macropus-giganteus: 76.7%%
+Notamacropus-agilis: 76.7%%
+Petaurus-breviceps: 76.7%%
+Phascolarctos-cinereus: 76.7%%
+
+*********
+Genes missing by species:
+Macropus giganteus:
+CO1
+CO2
+CO3
+NADH5
+NADH6
+cytb
+oriL
+tRNA-G
+tRNA-Le
+tRNA-Va
+
+Notamacropus agilis:
+CO1
+CO2
+CO3
+NADH5
+NADH6
+cytb
+oriL
+tRNA-G
+tRNA-Le
+tRNA-Va
+
+Petaurus breviceps:
+COX1
+COX2
+COX3
+CYTB
+L-strand-repeat-origin
+ND5
+ND6
+tRNA-G
+tRNA-Le
+tRNA-Va
+
+Phascolarctos cinereus:
+COX1
+COX2
+COX3
+CYTB
+L-strand-repeat-origin
+ND5
+ND6
+tRNA-G
+tRNA-Le
+tRNA-Va
+
+********
+Species missing by gene:
+CO1:
+Macropus-giganteus
+Notamacropus-agilis
+
+CO2:
+Macropus-giganteus
+Notamacropus-agilis
+
+CO3:
+Macropus-giganteus
+Notamacropus-agilis
+
+COX1:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+COX2:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+COX3:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+CYTB:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+L-strand-repeat-origin:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+NADH5:
+Macropus-giganteus
+Notamacropus-agilis
+
+NADH6:
+Macropus-giganteus
+Notamacropus-agilis
+
+ND5:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+ND6:
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+cytb:
+Macropus-giganteus
+Notamacropus-agilis
+
+oriL:
+Macropus-giganteus
+Notamacropus-agilis
+
+tRNA-G:
+Macropus-giganteus
+Notamacropus-agilis
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+tRNA-Le:
+Macropus-giganteus
+Notamacropus-agilis
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+tRNA-Va:
+Macropus-giganteus
+Notamacropus-agilis
+Petaurus-breviceps
+Phascolarctos-cinereus
+
+~~~~~~~~~~~ END REPORT ~~~~~~~~~~~
