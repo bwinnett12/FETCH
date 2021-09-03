@@ -55,16 +55,18 @@ def write_to_gb(raw_data, output_folder):
     files_downloaded = []
 
     # Creates a variable to store all the genbank file
-
     lines = raw_data.split("\n")
+    accession = ""
 
     for line in lines:
+        if 'ACCESSION' in line:
+            accession = line.split()[1]
+
         # By default, genbank files have "ORGANISM ID". Gets the ID and creates a file for it. Sets writing location
         if 'ORGANISM' in line:
-
             # Splits line and declares the file id based on desired folder and organism
             organism_name = '-'.join(line.split()[1:])
-            gb_location = output_folder + "gb/" + organism_name + ".gb"
+            gb_location = output_folder + "gb/" + organism_name + "_" + accession + ".gb"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(gb_location):
@@ -87,13 +89,19 @@ def write_genome(file, output_folder):
     # From here to the next section is just to get the file name of the organism
     lines = open(file, "r").readlines()
     out_loc = ""
+    accession = ""
 
     for line in lines:
-        # Only looks for the name of the organism
+        # This should be in first few line
+        if 'ACCESSION' in line:
+            accession = line.split()[1]
+
+
+        # Then only looks for the name of the organism
         if 'ORGANISM' in line:
 
             # Splits line and declares the file id based on desired folder and organism
-            out_loc = output_folder + "genome/" + '-'.join(line.split()[1:]) + "_genome.fa"
+            out_loc = output_folder + "genome/" + '-'.join(line.split()[1:]) + "_" + accession + "_genome.fa"
 
             # If there is no file, creates one and then adds the name for log outputting
             if not os.path.isfile(out_loc):
@@ -118,9 +126,11 @@ def write_to_fasta(raw, output_location):
 
         # Saves the sequence to avoid calling it repeatedly
         sequence = raw[j]["GBSeq_sequence"]
+        accession = raw[j]['GBSeq_locus']
 
         # Variable for the to be named output location
-        out_loc = output_location + "full_fa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) + "_full.fa"
+        out_loc = output_location + "full_fa/" + "-".join(raw[j]["GBSeq_organism"].split(" ")) +\
+                  "_" + accession + "_full.fa"
 
         # For the DNA version
         if not os.path.isfile(out_loc):
@@ -153,10 +163,11 @@ def write_to_fasta(raw, output_location):
                             product_name = qual['GBQualifier_value']
 
                     listed_descriptor = gene_name if gene_name.strip() != "" else product_name
+                    listed_descriptor = listed_descriptor.replace(" ", "-").replace("/", "|").replace(";", "|")
 
                     # Creates a header based on what we have
                     species = raw[j]["GBSeq_organism"]
-                    header = ">" + locus + ":" + listed_descriptor.replace(" ", "-") + ":" + species.replace(" ", "-")
+                    header = ">" + locus + ":" + listed_descriptor + ":" + species.replace(" ", "-")
 
                 # For the genes that aren't setup the same as the others
                 except KeyError:
@@ -240,7 +251,6 @@ def write_translation_to_fasta(file, out_location, table):
 def write_fasta_to_individual(file, output_folder, option, table):
     for record in SeqIO.parse(file, "fasta"):
         # IF record is empty or gene name is missing, skips it
-
         file_split = list(filter(None, record.description.split(":")))
 
         if len(file_split) < 3:

@@ -4,14 +4,16 @@ __email__ = "bwinnett12@gmail.com"
 # To operate, import whatever function you want to test
 # Currently doesn't use the config so every option has to be manually implemented
 
-# from FETCH.indexer import *
-# from FETCH.writer import *
-# from FETCH.puller import *
-# from FETCH.fetcher import *
-# from FETCH.reporter import *
+# from indexer import *
+# from writer import *
+# from puller import *
+# from fetcher import *
+# from reporter import *
 # import glob
 
 if __name__ == '__main__':
     storage_path = "../storage/"
     indexes_path = "../indexes/"
+    output_path = "../output/"
     print("Welcome to the debugging world of FETCH")
+

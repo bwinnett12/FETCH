@@ -65,6 +65,7 @@ def pull_query_to_fasta(out_loc, indexes_location, storage_location, run_mafft):
                 # Adds names to a list
                 files_array.append(pos)
 
+        files_array = sorted(files_array)
         for file in files_array:
             # writes the fasta into the file
             for record in SeqIO.parse(file, "fasta"):

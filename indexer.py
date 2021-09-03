@@ -47,6 +47,7 @@ def reset_indexes(storage_path, indexes_path):
             for file in glob.glob(path + "/faa/*.faa"):
                 fulllist.append(file.split("/")[-1].split("_")[0])
 
+        fulllist = [elem.split("_")[0] for elem in fulllist]
         return list(set(fulllist))
 
     # Ran once for each index
