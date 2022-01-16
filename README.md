@@ -3,19 +3,21 @@ This tool is FETCH. It is a tool for retrieving (fetching) mitochondrial genomes
 
 #### Nomenclature / Roadmap
  - Setup (-s or –setup): Sets up all local files for FETCH.
-- Fetch (-f or --fetch): Fetching retrieves any genome or any nucleotide based sequence from NCBI via accession number; as a single, concatenation, or text file full of accession numbers. The query also works as a boolean search parameter so you can type in anything you would directly on NCBI. This act stores (as fasta files) the genome, every gene individually and its translated equivalent, every gene together and its translated equivalent, and the genbank file as you would see if you searched the accession number on NCBI (as a text file) into storage.
+ - Fetch (-f or --fetch): Fetching retrieves any genome or any nucleotide based sequence from NCBI via accession number; as a single, concatenation, or text file full of accession numbers. The query also works as a boolean search parameter so you can type in anything you would directly on NCBI. This act stores (as fasta files) the genome, every gene individually and its translated equivalent, every gene together and its translated equivalent, and the genbank file as you would see if you searched the accession number on NCBI (as a text file) into storage.
 
-- Index (-i or –index): An up to date register of what is found in storage with multiple lists to clarify the data. Inside the indexes folder, there are four items: a genes.lst, a species.lst, a genes folder, and a species folder. The list files contain a list of every gene or species that is found in storage. Each record is commented out using a semi-colon. This is important because anything not commented out will be pulled. Running the -i command resets the indexes and re-comments everything. The folders contain a listing of what genes are contained per species and what species have a gene.
+ - Database (-b): Specifies which database of NCBI to fetch from. Default is nucleotide
 
-- Pull (-p or --pull): Consolidates every instance of a gene into a single fasta. Decommenting an index specifies which genes you wish you have pulled. For example, un-commenting ATP6 (;ATP6 → ATP6) and pulling will withdraw every instance of ATP6 into output.
+ - Index (-i or –index): An up to date register of what is found in storage with multiple lists to clarify the data. Inside the indexes folder, there are four items: a genes.lst, a species.lst, a genes folder, and a species folder. The list files contain a list of every gene or species that is found in storage. Each record is commented out using a semi-colon. This is important because anything not commented out will be pulled. Running the -i command resets the indexes and re-comments everything. The folders contain a listing of what genes are contained per species and what species have a gene.
 
-- Report (-r or –report): Generates reports and storage-wide reports. Currently available are a text report and a csv gene / species presence matrix.
+ - Pull (-p or --pull): Consolidates every instance of a gene into a single fasta. Decommenting an index specifies which genes you wish you have pulled. For example, un-commenting ATP6 (;ATP6 → ATP6) and pulling will withdraw every instance of ATP6 into output.
 
-- MAFFT (-m or --mafft): Runs mafft on all output files. Must have specified mafft in config if mafft not on path
+ - Report (-r or –report): Generates reports and storage-wide reports. Currently available are a text report and a csv gene / species presence matrix.
 
-- FastTree (-t or -tree): Runs fasttree on all output files. Must have specified fasttree location even if on path (/usr/bin/fastttree)
+ - MAFFT (-m or --mafft): Runs mafft on all output files. Must have specified mafft in config if mafft not on path
 
-- Delete (-d or --delete): Deletes everything in storage, reports, indexes, and output
+ - FastTree (-t or -tree): Runs fasttree on all output files. Must have specified fasttree location even if on path (/usr/bin/fastttree)
+
+ - Delete (-d or --delete): Deletes everything in storage, reports, indexes, and output
 
 ### Case study
 If you are like me and a wall of commands means the same as a Hawaiian to Greek dictionary to an English speaker, then a case study is the way to go. So let’s take for an example someone who is interested in the studying the evolutionary change in marsupials of Australia via the ATP6 and ND2 but we also want to see a genome wide profile of these organisms. <br/>

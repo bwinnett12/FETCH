@@ -11,12 +11,12 @@ from indexer import ensure_folder_scheme_storage
 
 
 # Parses the genebank and fetches what the user inputs
-def parse_ncbi(query_from_user, output_type, email):
+def parse_ncbi(query_from_user, output_type, email, database):
     # Always tell ncbi who you are. Or else it won't let you fetch
     Entrez.email = email
 
     # searches for those who fit your request
-    handle = Entrez.esearch(db="nucleotide", term=query_from_user)
+    handle = Entrez.esearch(db=database, term=query_from_user)
 
     # Records those who match the query and then formats them so it can fetch them
     record = Entrez.read(handle)
@@ -25,7 +25,7 @@ def parse_ncbi(query_from_user, output_type, email):
     retmode_input = ("text", "xml")[output_type == "fasta"]
 
     # Fetches those matching IDs from esearch
-    handle = Entrez.efetch(db="nucleotide", id=gi_query, rettype="gb", retmode=retmode_input)
+    handle = Entrez.efetch(db=database, id=gi_query, rettype="gb", retmode=retmode_input)
 
     # for xml... if using .txt it should be handle.read()
     if output_type == "fasta":
@@ -37,7 +37,7 @@ def parse_ncbi(query_from_user, output_type, email):
 
 
 # Something to run to run both functions. Ultimately will be done using R (Front End)
-def fetch(search_query, output_folder, email):
+def fetch(search_query, output_folder, email, database):
     # In case the storage is gone for some reason
     ensure_folder_scheme_storage(output_folder)
     search_query = search_query.split(',')
@@ -46,10 +46,10 @@ def fetch(search_query, output_folder, email):
     millis_before = int(round(time.time() * 1000))
 
     if len(search_query) <= 1:
-        text_to_write = parse_ncbi(search_query, "text", email)
+        text_to_write = parse_ncbi(search_query, "text", email, database)
         battery_writer("text", text_to_write, output_folder)
 
-        xml_to_write = parse_ncbi(search_query, "fasta", email)
+        xml_to_write = parse_ncbi(search_query, "fasta", email, database)
         battery_writer("xml", xml_to_write, output_folder)
 
     else:
@@ -58,11 +58,11 @@ def fetch(search_query, output_folder, email):
             sett = search_query[i:i + 2]
             # We can get away with two series then a 1 second wait
             for sing_query in sett:
-                text_to_write = parse_ncbi(sing_query, "text", email)
+                text_to_write = parse_ncbi(sing_query, "text", email, database)
                 battery_writer("text", text_to_write, output_folder)
                 # time.sleep(.25)
 
-                xml_to_write = parse_ncbi(sing_query, "fasta", email)
+                xml_to_write = parse_ncbi(sing_query, "fasta", email, database)
                 battery_writer("xml", xml_to_write, output_folder)
                 # time.sleep(.25)
             time.sleep(.5)

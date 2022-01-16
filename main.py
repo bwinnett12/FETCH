@@ -16,6 +16,12 @@ def main():
     # Part where argparser figures out your command
     parser = argparse.ArgumentParser(description='Parse NCBI and then work with Biological data')
 
+    # Argument for specifying database
+    parser.add_argument('-b',
+                        dest='database',
+                        default="nucleotide",
+                        help='Specifies the database to fetch from. Default nucleotide.')
+
     # Argument for clearing out the storage folder (Mostly for testing purposes)
     parser.add_argument('-d', '--delete',
                         dest='delete',
@@ -84,6 +90,7 @@ def main():
     # This stores all of the values from the parser
     args = parser.parse_args()
 
+    database = args.database.lower() if args.database.lower() != "nucleotide" else "nucleotide"
     delete = args.delete
     query_fetch = args.fetch
     index = args.index
@@ -142,11 +149,11 @@ def main():
             accession_numbers_from_file = ','.join(accession_numbers_from_file)
 
             # Fetches based on the accession numbers
-            fetch(accession_numbers_from_file, location_storage, email)
+            fetch(accession_numbers_from_file, location_storage, email, database)
 
         else:  # Fetches the single query
             print("Fetching...")
-            fetch(query_fetch, location_storage, email)
+            fetch(query_fetch, location_storage, email, database)
 
         # Optional resetting indexes
         if reset_indexes_default == 1 or reset_indexes_default:
