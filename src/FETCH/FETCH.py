@@ -1,3 +1,9 @@
+from pathlib import Path
+import sys
+path = str(Path(Path(__file__).parent.absolute()).parent.absolute())
+sys.path.insert(0, path)
+
+
 import configparser
 import argparse
 import glob
@@ -210,6 +216,10 @@ def main():
         generate_error_log = False if int(tools_fasttree_generate_error_log) == 0 else True
         tool_fasttree(location_output, tools_fasttree_path, generate_error_log)
         return
+    
+    return "FETCH ran successfully"
+
+
 
 
 # If you want to start fresh with your storage contents
